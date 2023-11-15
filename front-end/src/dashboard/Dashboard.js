@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { listReservations } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
@@ -14,9 +14,9 @@ import { previous,today, next } from "../utils/date-time";
 function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
-  const [resDate, setResDate] = useState({ date })
+  //const [resDate, setResDate] = useState({ date })
 
-  useEffect(loadDashboard, [resDate]);
+  useEffect(loadDashboard, [date]);
 
   function loadDashboard() {
     const abortController = new AbortController();
@@ -29,20 +29,27 @@ function Dashboard({ date }) {
 
   const history = useHistory();
 
-  useEffect(() => {
-    history.push(`/dashboard?date=${resDate}`);
-  }, [resDate, history]);
+  const location = useLocation();
+  const test = new URLSearchParams(location.search).get('date');
+  console.log(test)
+
+  //useEffect(() => {
+    //history.push(`/dashboard?date=${resDate}`);
+  //}, [resDate, history]);
 
   function previousHandler() {
-    setResDate(previous(resDate));
+    //setResDate(previous(resDate));
+    console.log("prev")
   }
 
   function todayHandler() {
-    setResDate(today());
+    //setResDate(today());
+    console.log("today")
   }
 
   function nextHandler() {
-    setResDate(next(resDate));
+    //setResDate(next(resDate));
+    console.log("next")
   }
 
   return (
