@@ -98,5 +98,5 @@ async function create(req, res, next) {
 
 module.exports = {
   list,
-  create: [hasRequiredProperties, create]
+  create: [create]
 };
