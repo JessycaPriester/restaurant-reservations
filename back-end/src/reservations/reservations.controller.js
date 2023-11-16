@@ -6,8 +6,6 @@ const service = require("./reservations.service")
  */
 async function list(request, response) {
   const date = request.query.date;
-  console.log(date)
-  //const mobile_number = request.query.mobile_number;
   const reservations = await service.list(date);
   const res = reservations.filter(
     (reservation) => reservation.status !== "finished"
@@ -25,67 +23,45 @@ const REQUIRED_PROPERTIES = [
 ]
 
 function hasRequiredProperties(req, res, next) {
-  const missingProperties = []
+  const missingProperties = [];
+
   for (const property of REQUIRED_PROPERTIES) {
     if (!req.body.data[property]) {
-      missingProperties.push(property)
+      missingProperties.push(property);
     }
   }
-  
 
-  console.log(req.body.data)
-  console.log(missingProperties)
-
-  if (missingProperties.length > 0 || !req.body.data) {
+  if (missingProperties.length > 0) {
     return res.status(400).json({
-      error: `Missing required property: ${missingProperties.join(", ")}`,
-    });
-  } else {
-    next()
-  }
-}
-
-/*function isValidDate(value) {
-  // Check if the value is an instance of the Date object and not NaN
-  return value instanceof Date && !isNaN(value);
-}
-
-function hasValidDateProperty(req, res, next) {
-  const { data } = req.body;
-
-  // Check if reservationDate is a valid date
-  if (!isValidDate(new Date(data.reservationDate))) {
-    return res.status(400).json({
-      error: 'Invalid reservation date format',
+      error: `Missing required properties: ${missingProperties.join(', ')}`,
     });
   }
 
-  // Continue to the next middleware if the date is valid
   next();
 }
 
-function partySizeIsValid(req, res, next) {
-  const partySize = req.body.people;
+function peopleIsANumber(req, res, next) {
+  const people = req.body.data.people
 
-  if (partySize <= 0 || isNaN(partySize)) {
+  if (isNaN(people)) {
     return res.status(400).json({
-      error: `There must be at least one person`
-    })
+      error: `People must be a number`,
+    });
   }
-
   next()
-} */
+}
+
 
 async function create(req, res, next) {
   try {
-    const { data: { firstName, lastName, mobileNumber, reservationDate, reservationTime, partySize } = {} } = req.body;
+    const { data: { first_name, last_name, mobile_number, reservation_date, reservation_time, people } = {} } = req.body;
     const newReservation = {
-      first_name: firstName,
-      last_name: lastName,
-      mobile_number: mobileNumber,
-      reservation_date: reservationDate,
-      reservation_time: reservationTime,
-      people: partySize
+      first_name: first_name,
+      last_name: last_name,
+      mobile_number: mobile_number,
+      reservation_date: reservation_date,
+      reservation_time: reservation_time,
+      people: people
     };
 
     await service.create(newReservation);
@@ -98,5 +74,5 @@ async function create(req, res, next) {
 
 module.exports = {
   list,
-  create: [create]
+  create: [hasRequiredProperties, peopleIsANumber, create]
 };

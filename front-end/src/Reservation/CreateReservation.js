@@ -6,12 +6,12 @@ import Dashboard from "../dashboard/Dashboard";
 function CreateReservation() {
     const history = useHistory();
 
-    const [ firstName, setFirstName ] = useState("");
-    const [ lastName, setLastName ] = useState("");
-    const [ mobileNumber, setMobileNumber] = useState("");
-    const [ reservationDate, setReservationDate ] = useState("");
-    const [ reservationTime, setReservationTime ] = useState("");
-    const [ partySize, setPartySize ] = useState(1)
+    const [ first_name, setFirstName ] = useState("");
+    const [ last_name, setLastName ] = useState("");
+    const [ mobile_number, setMobileNumber] = useState("");
+    const [ reservation_date, setReservationDate ] = useState("");
+    const [ reservation_time, setReservationTime ] = useState("");
+    const [ people, setPartySize ] = useState(1)
 
     // Change handlers for input boxes
     const handleFirstNameChange = (event) => setFirstName(event.target.value)
@@ -28,7 +28,7 @@ function CreateReservation() {
 
     const submitHandler = async(event) => {
         event.preventDefault();
-        const reservation = await createReservation({firstName, lastName, mobileNumber, reservationDate, reservationTime, partySize})
+        const reservation = await createReservation({first_name, last_name, mobile_number, reservation_date, reservation_time, people})
         history.push(`/dashboard?date=${reservation.reservation_date}`)
     }
 
