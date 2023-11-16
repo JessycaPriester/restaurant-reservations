@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {useHistory} from "react-router-dom";
 import { createReservation } from "../utils/api";
+import Dashboard from "../dashboard/Dashboard";
 
 function CreateReservation() {
     const history = useHistory();
@@ -28,6 +29,7 @@ function CreateReservation() {
     const submitHandler = async(event) => {
         event.preventDefault();
         const reservation = await createReservation({firstName, lastName, mobileNumber, reservationDate, reservationTime, partySize})
+        history.push(`dashboard/${reservation.reservation_date}`)
     }
 
     return (

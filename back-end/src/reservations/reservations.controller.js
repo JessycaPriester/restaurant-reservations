@@ -15,6 +15,58 @@ async function list(request, response) {
   response.json({ data: res });
 }
 
+const REQUIRED_PROPERTIES = [
+  "firstName",
+  "lastName",
+  "mobileNumber",
+  "reservationDate",
+  "reservationTime",
+  "partySize"
+]
+
+function hasRequiredProperties(req, res, next) {
+  const { data = {}} = req.body;
+  console.log(data)
+
+  for (const property of REQUIRED_PROPERTIES) {
+    if (!data[property]) {
+      return res.status(400).json({
+        error: `Missing required property: ${property}`,
+      });
+    }
+  }
+
+  next();
+}
+
+function partySizeIsValid(req, res, next) {
+  const partySize = req.body.people;
+
+  if (partySize <= 0) {
+    return res.status(400).json({
+      error: `There must be at least one person`
+    })
+  }
+
+  next()
+}
+
+async function create(req, res, next) {
+  const { data: {firstName, lastName, mobileNumber, reservationDate, reservationTime, partySize} = {}} = req.body;
+  const newReservation = {
+    first_name: firstName,
+    last_name: lastName,
+    mobile_number: mobileNumber,
+    reservation_date: reservationDate,
+    reservation_time: reservationTime,
+    people: partySize
+  }
+
+  await service.create(newReservation)
+  res.json({ data: res })
+}
+
 module.exports = {
   list,
+  create: [hasRequiredProperties, partySizeIsValid, create]
 };

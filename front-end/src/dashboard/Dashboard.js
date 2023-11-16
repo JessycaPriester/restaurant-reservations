@@ -14,42 +14,44 @@ import { previous,today, next } from "../utils/date-time";
 function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
-  //const [resDate, setResDate] = useState({ date })
+  const [resDate, setResDate] = useState(null);
 
-  useEffect(loadDashboard, [date]);
+  const location = useLocation();
+  const queryDate = new URLSearchParams(location.search).get('date');
+  
+  useEffect(() => {
+    if (queryDate) {
+      setResDate(queryDate);
+    } else {
+      setResDate(date);
+    }
+  }, [queryDate, date]);
 
-  function loadDashboard() {
+  useEffect(() => {
     const abortController = new AbortController();
     setReservationsError(null);
-    listReservations({ date }, abortController.signal)
+    
+    listReservations({ date: resDate }, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
+
     return () => abortController.abort();
-  }
+  }, [resDate]);
+
 
   const history = useHistory();
 
-  const location = useLocation();
-  const test = new URLSearchParams(location.search).get('date');
-  console.log(test)
-
-  //useEffect(() => {
-    //history.push(`/dashboard?date=${resDate}`);
-  //}, [resDate, history]);
 
   function previousHandler() {
-    //setResDate(previous(resDate));
-    console.log("prev")
+    history.push(`dashboard?date=${previous(resDate)}`);
   }
 
   function todayHandler() {
-    //setResDate(today());
-    console.log("today")
+    history.push(`dashboard?date=${today()}`);
   }
 
   function nextHandler() {
-    //setResDate(next(resDate));
-    console.log("next")
+    history.push(`dashboard?date=${next(resDate)}`);
   }
 
   return (
