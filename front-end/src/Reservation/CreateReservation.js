@@ -29,7 +29,7 @@ function CreateReservation() {
     const submitHandler = async(event) => {
         event.preventDefault();
         const reservation = await createReservation({firstName, lastName, mobileNumber, reservationDate, reservationTime, partySize})
-        history.push(`dashboard/${reservation.reservation_date}`)
+        history.push(`/dashboard?date=${reservation.reservation_date}`)
     }
 
     return (

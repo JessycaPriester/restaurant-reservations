@@ -16,57 +16,87 @@ async function list(request, response) {
 }
 
 const REQUIRED_PROPERTIES = [
-  "firstName",
-  "lastName",
-  "mobileNumber",
-  "reservationDate",
-  "reservationTime",
-  "partySize"
+  "first_name",
+  "last_name",
+  "mobile_number",
+  "reservation_date",
+  "reservation_time",
+  "people"
 ]
 
 function hasRequiredProperties(req, res, next) {
-  const { data = {}} = req.body;
-  console.log(data)
-
+  const missingProperties = []
   for (const property of REQUIRED_PROPERTIES) {
-    if (!data[property]) {
-      return res.status(400).json({
-        error: `Missing required property: ${property}`,
-      });
+    if (!req.body.data[property]) {
+      missingProperties.push(property)
     }
   }
+  
 
+  console.log(req.body.data)
+  console.log(missingProperties)
+
+  if (missingProperties.length > 0 || !req.body.data) {
+    return res.status(400).json({
+      error: `Missing required property: ${missingProperties.join(", ")}`,
+    });
+  } else {
+    next()
+  }
+}
+
+/*function isValidDate(value) {
+  // Check if the value is an instance of the Date object and not NaN
+  return value instanceof Date && !isNaN(value);
+}
+
+function hasValidDateProperty(req, res, next) {
+  const { data } = req.body;
+
+  // Check if reservationDate is a valid date
+  if (!isValidDate(new Date(data.reservationDate))) {
+    return res.status(400).json({
+      error: 'Invalid reservation date format',
+    });
+  }
+
+  // Continue to the next middleware if the date is valid
   next();
 }
 
 function partySizeIsValid(req, res, next) {
   const partySize = req.body.people;
 
-  if (partySize <= 0) {
+  if (partySize <= 0 || isNaN(partySize)) {
     return res.status(400).json({
       error: `There must be at least one person`
     })
   }
 
   next()
-}
+} */
 
 async function create(req, res, next) {
-  const { data: {firstName, lastName, mobileNumber, reservationDate, reservationTime, partySize} = {}} = req.body;
-  const newReservation = {
-    first_name: firstName,
-    last_name: lastName,
-    mobile_number: mobileNumber,
-    reservation_date: reservationDate,
-    reservation_time: reservationTime,
-    people: partySize
-  }
+  try {
+    const { data: { firstName, lastName, mobileNumber, reservationDate, reservationTime, partySize } = {} } = req.body;
+    const newReservation = {
+      first_name: firstName,
+      last_name: lastName,
+      mobile_number: mobileNumber,
+      reservation_date: reservationDate,
+      reservation_time: reservationTime,
+      people: partySize
+    };
 
-  await service.create(newReservation)
-  res.json({ data: res })
+    await service.create(newReservation);
+    res.status(201).json({ data: newReservation });
+  } catch (error) {
+    next(error);
+  }
 }
+
 
 module.exports = {
   list,
-  create: [hasRequiredProperties, partySizeIsValid, create]
+  create: [hasRequiredProperties, create]
 };
