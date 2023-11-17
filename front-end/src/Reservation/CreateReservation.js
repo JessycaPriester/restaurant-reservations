@@ -13,6 +13,7 @@ function CreateReservation() {
     const [ reservation_date, setReservationDate ] = useState("");
     const [ reservation_time, setReservationTime ] = useState("");
     const [ people, setPartySize ] = useState(1)
+    const [error, setError] = useState(null)
 
     // Change handlers for input boxes
     const handleFirstNameChange = (event) => setFirstName(event.target.value)
@@ -29,6 +30,26 @@ function CreateReservation() {
 
     const submitHandler = async(event) => {
         event.preventDefault();
+
+        // Check if reservation date is on a day restaurant is closed 
+        const dateParts = reservation_date.split('-');
+        const reservationDate = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+        
+
+        if (reservationDate.getDay() === 2) {
+            setError("The restaurant is closed on Tuesdays.");
+            return;
+        } 
+
+        // Check if reservation date is on a day in the future
+        const currentDate = new Date()
+        if (reservationDate < currentDate) {
+            console.log("bad")
+            setError("Invalid reservation date. Please choose a future date.");
+            return;
+        }
+
+
         const reservation = await createReservation({first_name, last_name, mobile_number, reservation_date, reservation_time, people})
         history.push(`/dashboard?date=${reservation.reservation_date}`)
     }
@@ -63,6 +84,11 @@ function CreateReservation() {
                 <button type="submit">Submit</button>
                 <button type="button" onClick={cancelHandler}>Cancel</button>
             </form>
+            {error && (
+                <div className="alert alert-danger" role="alert">
+                    {error}
+                </div>
+            )}
         </div>
     )
 }
