@@ -3,6 +3,7 @@ import {useHistory} from "react-router-dom";
 import { createReservation } from "../utils/api";
 import Dashboard from "../dashboard/Dashboard";
 
+
 function CreateReservation() {
     const history = useHistory();
 
@@ -19,7 +20,7 @@ function CreateReservation() {
     const handleMobileNumberChange = (event) => setMobileNumber(event.target.value);
     const handleReservationDateChange = (event) => setReservationDate(event.target.value);
     const handleReservationTimeChange= (event) => setReservationTime(event.target.value);
-    const handlePartySizeChange = (event) => setPartySize(event.target.value);
+    const handlePartySizeChange = (event) => setPartySize(Number(event.target.value));
 
     // Handlers for buttons
     function cancelHandler() {
@@ -43,10 +44,10 @@ function CreateReservation() {
                     Last Name
                     <input required type="text" id="last_name" name="last_name" onChange={handleLastNameChange} />
                 </label>
-                <lable htmlFor="mobile_number">
+                <label htmlFor="mobile_number">
                     Mobile Number
                     <input required type="text" id="mobile_number" name="mobile_number" onChange={handleMobileNumberChange} />
-                </lable>
+                </label>
                 <label htmlFor="reservation_date">
                     Reservation Date
                     <input required type="date" id="reservation_date" name="reservation_date" onChange={handleReservationDateChange} />

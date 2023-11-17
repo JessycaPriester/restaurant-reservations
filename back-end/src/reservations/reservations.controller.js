@@ -23,10 +23,11 @@ const REQUIRED_PROPERTIES = [
 ]
 
 function hasRequiredProperties(req, res, next) {
+  const { data = {}} = req.body
   const missingProperties = [];
 
   for (const property of REQUIRED_PROPERTIES) {
-    if (!req.body.data[property]) {
+    if (!data[property]) {
       missingProperties.push(property);
     }
   }
@@ -40,17 +41,38 @@ function hasRequiredProperties(req, res, next) {
   next();
 }
 
-function peopleIsANumber(req, res, next) {
-  const people = req.body.data.people
+function hasValidProperties(req, res, next) {
+  const { reservation_date, reservation_time, people} = req.body.data;
+  const isNumber = Number.isInteger(people);
+  const day = `${reservation_date}  ${reservation_time}`;
+  const today = new Date();
+  const date = new Date(day);
+  const timeFormat = /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
+  const dateFormat = /^\d{4}\-\d{1,2}\-\d{1,2}$/;
 
-  if (isNaN(people)) {
-    return res.status(400).json({
-      error: `People must be a number`,
+  if (!isNumber || people <= 0) {
+    return next({
+      status: 400,
+      message: "You must make a reservation for 1 or more people",
     });
   }
+
+  if (!reservation_date.match(dateFormat)) {
+    return next({
+      status: 400,
+      message: `reservation_date is not a valid date!`,
+    });
+  }
+
+  if (!reservation_time.match(timeFormat)) {
+    return next({
+      status: 400,
+      message: `reservation_time is not a valid time!`,
+    });
+  }
+
   next()
 }
-
 
 async function create(req, res, next) {
   try {
@@ -74,5 +96,5 @@ async function create(req, res, next) {
 
 module.exports = {
   list,
-  create: [hasRequiredProperties, peopleIsANumber, create]
+  create: [hasRequiredProperties, hasValidProperties, create]
 };
