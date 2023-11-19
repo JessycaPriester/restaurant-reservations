@@ -76,6 +76,7 @@ function hasValidProperties(req, res, next) {
 
 function hasValidDate(req,res, next) {
   const {reservation_date} = req.body.data;
+  const {reservation_time} = req.body.data;
 
   // Check if reservation date is on a day restaurant is closed 
   const dateParts = reservation_date.split('-');
@@ -88,15 +89,45 @@ function hasValidDate(req,res, next) {
     })
   };
 
-  // Check if reservation date is on a day in the future
+  // Check if reservation date and time are in the future
   const currentDate = new Date()
-  if (reservationDate < currentDate) {
+
+  const reservationDateDate = reservationDate.toLocaleDateString('en-US').split('T')[0]
+  const currentDateDate = currentDate.toLocaleDateString('en-US').split('T')[0]
+
+  const currentHours = currentDate.getHours().toString().padStart(2, '0');
+  const currentMinutes =  currentDate.getMinutes().toString().padStart(2, '0');
+  const currentTime = `${currentHours}:${currentMinutes}`;
+
+  if (reservationDateDate === currentDateDate) {
+    if (reservation_time < currentTime) {
+      return next({
+        status: 400,
+        message: 'Invalid reservation time. Please choose a future time.'
+      })
+    }
+  }
+
+  if (reservationDateDate < currentDateDate) {
     return next({
       status: 400,
       message: 'Invalid reservation date. Please choose a future date.'
     })
   }
   next();
+}
+
+// Check if a reservation time is during operating hours
+function hasValidTime(req, res, next) {
+  const { reservation_time } = req.body.data
+
+  if (reservation_time < '10:30' || reservation_time > '21:30') {
+    return next({
+      status: 400,
+      message: 'Reservation time is outside hours of operation.'
+    })
+  }
+  next()
 }
 
 async function create(req, res, next) {
@@ -121,5 +152,5 @@ async function create(req, res, next) {
 
 module.exports = {
   list,
-  create: [hasRequiredProperties, hasValidProperties, hasValidDate, create]
+  create: [hasRequiredProperties, hasValidProperties, hasValidDate, hasValidTime, create]
 };

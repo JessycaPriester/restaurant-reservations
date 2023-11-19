@@ -41,12 +41,32 @@ function CreateReservation() {
             return;
         } 
 
-        // Check if reservation date is on a day in the future
+        // Check if reservation date and time are in the future
         const currentDate = new Date()
-        if (reservationDate < currentDate) {
-            console.log("bad")
+
+        const reservationDateDate = reservationDate.toLocaleDateString('en-US').split('T')[0]
+        const currentDateDate = currentDate.toLocaleDateString('en-US').split('T')[0]
+
+        const currentHours = currentDate.getHours().toString().padStart(2, '0');
+        const currentMinutes =  currentDate.getMinutes().toString().padStart(2, '0');
+        const currentTime = `${currentHours}:${currentMinutes}`;
+
+
+        if (reservationDateDate === currentDateDate) {
+            if (reservation_time < currentTime) {
+                setError("Invalid reservation time. Please choose a future time.");
+                return;
+            }
+        }
+
+        if (reservationDateDate < currentDateDate) {
             setError("Invalid reservation date. Please choose a future date.");
             return;
+        }
+
+        // Check if reservation time is during operating hours
+        if (reservation_time < '10:30' || reservation_time > '21:30') {
+            setError("Reservation time is outside hours of operation.")
         }
 
 
