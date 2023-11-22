@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { listReservations } from "../utils/api";
+import { listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
 import { previous,today, next } from "../utils/date-time";
@@ -14,7 +14,9 @@ import { previous,today, next } from "../utils/date-time";
 function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
+  const [tablesError, setTablesError] = useState(null)
   const [resDate, setResDate] = useState(null);
+  const [tables, setTables] = useState([])
 
   const location = useLocation();
   const queryDate = new URLSearchParams(location.search).get('date');
@@ -37,6 +39,17 @@ function Dashboard({ date }) {
 
     return () => abortController.abort();
   }, [resDate]);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+    setTablesError(null);
+
+    listTables(abortController.signal)
+      .then(setTables)
+      .then(console.log(tables))
+      .catch(setTablesError)
+
+  }, [])
 
 
   const history = useHistory();
@@ -61,12 +74,33 @@ function Dashboard({ date }) {
         <h4 className="mb-0">Reservations for date</h4>
       </div>
       <ErrorAlert error={reservationsError} />
-      {JSON.stringify(reservations)}
+      <h3>Reservations</h3>
+      <ul>
+        {reservations.map((reservation) => (
+          <li key={reservation.reservation_id}>
+            <strong>Name:</strong> {reservation.first_name} {reservation.last_name}<br />
+            <strong>Mobile Number:</strong> {reservation.mobile_number}<br />
+            <strong>Date:</strong> {reservation.reservation_date}<br />
+            <strong>Time:</strong> {reservation.reservation_time}<br />
+            <strong>Party Size:</strong> {reservation.people}<br />
+            <a href={`reservations/${reservation.reservation_id}/seat`}>
+              <button>Seat</button>
+            </a>
+          </li>
+        ))}
+      </ul>
       <div>
         <button type="button" onClick={previousHandler}>Previous</button>
         <button type="button" onClick={todayHandler}>Today</button>
         <button type="button" onClick={nextHandler}>Next</button>
       </div>
+      <h3>Tables</h3>
+          {tables.map((table) => (
+            <li>
+              <strong>Table Name:</strong> {table.table_name}<br />
+              <strong>Table Capacity</strong> {table.capacity}<br />
+            </li>
+          ))}
     </main>
   );
 }

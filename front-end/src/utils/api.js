@@ -79,3 +79,24 @@ export async function createReservation(reservation, signal) {
   }
   return await fetchJson(url, options, reservation)
 }
+
+ export async function createTable(table, signal) {
+  // DON'T KNOW IF THIS IS THE CORRECT URL
+  const url = `${API_BASE_URL}/dashboard`;
+  const options = {
+    method: "POST",
+    headers,
+    body: JSON.stringify({data: table}),
+    signal
+  }
+  return await fetchJson(url, options, table)
+}
+
+
+export async function listTables(signal) {
+  // DON'T KNOW IF THIS IS CORRECT
+  const url = new URL(`${API_BASE_URL}/dashboard`);
+
+  return await fetchJson(url, { headers, signal}, [])
+}
+
