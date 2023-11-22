@@ -81,7 +81,6 @@ export async function createReservation(reservation, signal) {
 }
 
  export async function createTable(table, signal) {
-  // DON'T KNOW IF THIS IS THE CORRECT URL
   const url = `${API_BASE_URL}/dashboard`;
   const options = {
     method: "POST",
@@ -93,10 +92,9 @@ export async function createReservation(reservation, signal) {
 }
 
 
-export async function listTables(signal) {
-  // DON'T KNOW IF THIS IS CORRECT
+export async function listTables(params, signal) {
   const url = new URL(`${API_BASE_URL}/dashboard`);
-
+  
   return await fetchJson(url, { headers, signal}, [])
 }
 

@@ -8,8 +8,9 @@ async function list(req, res) {
 }
 
 async function listTables(req, res) {
-    const tables = await service.listTables();
-    res.json({ data: tables })
+    const date = req.query.date;
+
+    res.redirect(`/reservations?date=${date}`)
 }
 
 module.exports = {
