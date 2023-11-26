@@ -6,8 +6,12 @@ function list(date) {
     .select("*")
     .where({ reservation_date: date })
     .orderBy("reservation_time", "asc");
+    } else {
+        return knex("reservations")
+            .select("*")
     }
 }
+
 
 
 function create(newReservation) {
@@ -16,14 +20,7 @@ function create(newReservation) {
 }
 
 
-function listTables() {
-    return knex("tables")
-        .select("*")
-        .orderBy('table_name')
-}
-
 module.exports = {
     list,
     create,
-    listTables,
 }

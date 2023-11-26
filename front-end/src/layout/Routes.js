@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { listTables } from "../utils/api";
 
 import { Redirect, Route, Switch } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
@@ -7,7 +8,7 @@ import { today } from "../utils/date-time";
 
 import CreateReservation from "../Reservation/CreateReservation";
 import CreateTable from "../Tables/CreateTable";
-import SeatTable from "../Reservation/SeatReservation";
+import SeatReservation from "../Reservation/SeatReservation";
 
 /**
  * Defines all the routes for the application.
@@ -17,6 +18,19 @@ import SeatTable from "../Reservation/SeatReservation";
  * @returns {JSX.Element}
  */
 function Routes() {
+  const [tables, setTables] = useState([])
+  const [tablesError, setTablesError] = useState(null)
+
+  useEffect(() => {
+    const abortController = new AbortController();
+    setTablesError(null);
+
+    listTables(abortController.signal)
+      .then(setTables)
+      .catch(setTablesError)
+
+  }, [])
+
   return (
     <Switch>
       <Route exact={true} path="/">
@@ -26,7 +40,7 @@ function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
       <Route path="/dashboard">
-        <Dashboard date={today()} />
+        <Dashboard date={today()} tables={tables} />
       </Route>
       <Route path="/reservations/new">
         <CreateReservation />
@@ -35,7 +49,7 @@ function Routes() {
         <CreateTable />
       </Route>
       <Route path="/reservations/:reservation_id/seat">
-        <SeatTable />
+        <SeatReservation tables={tables}/>
       </Route>
       <Route>
         <NotFound />

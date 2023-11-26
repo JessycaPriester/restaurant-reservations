@@ -13,10 +13,7 @@ async function list(request, response) {
   response.json({ data: res });
 }
 
-async function listTables(req, res, next) {
-  const tables = await service.listTables();
-  res.json({ data: tables })
-}
+
 
 const REQUIRED_PROPERTIES = [
   "first_name",
@@ -158,5 +155,5 @@ async function create(req, res, next) {
 module.exports = {
   list,
   create: [hasRequiredProperties, hasValidProperties, hasValidDate, hasValidTime, create],
-  listTables
+
 };

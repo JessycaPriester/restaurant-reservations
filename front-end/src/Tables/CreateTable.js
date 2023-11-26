@@ -1,6 +1,6 @@
 import React, {useState} from "react";
 import { useHistory } from "react-router-dom";
-//import { createTable } from "../utils/api";
+import { createTable } from "../utils/api";
 
 function CreateTable() {
     const history = useHistory();
@@ -20,7 +20,7 @@ function CreateTable() {
 
     const submitHandler = async(event) => {
         event.preventDefault();
-        //const table = await createTable({table_name, capacity})
+        const table = await createTable({table_name, capacity})
         console.log("Submitted");
         history.push(`/dashboard`)
     }

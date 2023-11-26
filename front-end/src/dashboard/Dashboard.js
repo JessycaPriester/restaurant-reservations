@@ -11,12 +11,13 @@ import { previous,today, next } from "../utils/date-time";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ date }) {
+function Dashboard({ date, tables }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
-  const [tablesError, setTablesError] = useState(null)
+  //const [tablesError, setTablesError] = useState(null)
   const [resDate, setResDate] = useState(null);
-  const [tables, setTables] = useState([])
+  //const [tables, setTables] = useState([])
+
 
   const location = useLocation();
   const queryDate = new URLSearchParams(location.search).get('date');
@@ -40,16 +41,15 @@ function Dashboard({ date }) {
     return () => abortController.abort();
   }, [resDate]);
 
-  useEffect(() => {
+ /* useEffect(() => {
     const abortController = new AbortController();
     setTablesError(null);
 
     listTables(abortController.signal)
       .then(setTables)
-      .then(console.log(tables))
       .catch(setTablesError)
 
-  }, [])
+  }, []) */
 
 
   const history = useHistory();
@@ -96,9 +96,15 @@ function Dashboard({ date }) {
       </div>
       <h3>Tables</h3>
           {tables.map((table) => (
-            <li>
+            <li key={table.table_id}>
               <strong>Table Name:</strong> {table.table_name}<br />
               <strong>Table Capacity</strong> {table.capacity}<br />
+              {table.reservation_id ? (
+                <p data-table-id-status={table.table_id}>Occupied</p>
+              ) : (
+                <p>Free</p>
+              )
+            }
             </li>
           ))}
     </main>
