@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { listReservations, updateTable } from "../utils/api";
 
 function SeatTable({tables}) {
@@ -7,6 +7,7 @@ function SeatTable({tables}) {
     const [reservation, setReservation] = useState(null);
     const [tableId, setTableId] = useState(null);
     const [table, setTable] = useState({})
+    const [error, setError] = useState(null)
 
     console.log(reservation)
 
@@ -36,14 +37,26 @@ function SeatTable({tables}) {
 
     const handleTableChange = (event) => setTableId(event.target.value)
 
+    const history = useHistory()
+
+    function cancelHandler(){
+        history.goBack();
+    }
+
     const submitHandler = async(event) => {
         event.preventDefault();
-        console.log("Submitting")
+
+        if (reservation.people > table.capacity) {
+            setError("Party size must be less than or equal to table capacity");
+            return;
+        }
+
         updateTable(tableId, {
             ...table,
             reservation_id: reservation.reservation_id,
         })
-        .then(console.log("done"))
+
+        history.push('/dashboard')
     }
 
     return (
@@ -57,7 +70,13 @@ function SeatTable({tables}) {
                     ))}
                 </select>
                 <button type="submit">Submit</button>
+                <button type="button" onClick={(cancelHandler)}>Cancel</button>
             </form>
+            {error && (
+                <div className="alert alert-danger" role="alert">
+                    {error}
+                </div>
+            )}
         </div>
     )
 }

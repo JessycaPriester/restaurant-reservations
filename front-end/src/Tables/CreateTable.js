@@ -7,6 +7,7 @@ function CreateTable() {
 
     const [ table_name, setTableName ] = useState("");
     const [ capacity, setCapacity ] = useState(1);
+    const [error, setError] = useState(null)
 
 
     // Change handlers for input boxes
@@ -20,6 +21,25 @@ function CreateTable() {
 
     const submitHandler = async(event) => {
         event.preventDefault();
+
+        // Check if table name exists
+        if (!table_name) {
+            setError("Table name is required.");
+            return;
+        }
+
+        // Check if table name is two or more characters long
+        if (table_name.length < 2) {
+            setError("Table name must be at least two characters long.")
+            return;
+        }
+
+        // Check that capacity is one or more
+        if (Number(capacity) < 1) {
+            setError("Capacity must be at least 1");
+            return;
+        }
+
         const table = await createTable({table_name, capacity})
         console.log("Submitted");
         history.push(`/dashboard`)
@@ -39,6 +59,11 @@ function CreateTable() {
                 <button type="submit">Submit</button>
                 <button type="cancel" onClick={cancelHandler}>Cancel</button>
             </form>
+            {error && (
+                <div className="alert alert-danger" role="alert">
+                    {error}
+                </div>
+            )}
         </div>
     )
 }

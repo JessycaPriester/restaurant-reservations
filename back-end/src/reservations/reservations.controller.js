@@ -13,6 +13,28 @@ async function list(request, response) {
   response.json({ data: res });
 }
 
+function reservationExists(req, res, next) {
+  service
+      .read(req.params.reservationId)
+      .then((reservation) => {
+          if (reservation) {
+              res.locals.reservation = reservation;
+              return next()
+          }
+          next({
+              status: 404, 
+              message: "Reservation cannot be found"
+          })
+      })
+      .catch(next)
+}
+
+async function read(req, res, next) {
+  const reservationId = res.locals.reservation.reservation_id
+  const reservation = await service.read(reservationId);
+  res.json({data: reservation}).status(200);
+}
+
 
 
 const REQUIRED_PROPERTIES = [
@@ -101,6 +123,10 @@ function hasValidDate(req,res, next) {
   const currentMinutes =  currentDate.getMinutes().toString().padStart(2, '0');
   const currentTime = `${currentHours}:${currentMinutes}`;
 
+  console.log(currentDateDate)
+  console.log(reservationDateDate)
+
+
   if (reservationDateDate === currentDateDate) {
     if (reservation_time < currentTime) {
       return next({
@@ -110,7 +136,12 @@ function hasValidDate(req,res, next) {
     }
   }
 
-  if (reservationDateDate < currentDateDate) {
+
+  const resDate = new Date(reservationDate)
+
+  console.log(currentDate)
+  console.log(resDate)
+  if (resDate < currentDate) {
     return next({
       status: 400,
       message: 'Invalid reservation date. Please choose a future date.'
@@ -155,5 +186,5 @@ async function create(req, res, next) {
 module.exports = {
   list,
   create: [hasRequiredProperties, hasValidProperties, hasValidDate, hasValidTime, create],
-
+  read: [reservationExists, read],
 };

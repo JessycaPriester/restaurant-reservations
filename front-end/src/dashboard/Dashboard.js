@@ -83,9 +83,7 @@ function Dashboard({ date, tables }) {
             <strong>Date:</strong> {reservation.reservation_date}<br />
             <strong>Time:</strong> {reservation.reservation_time}<br />
             <strong>Party Size:</strong> {reservation.people}<br />
-            <a href={`reservations/${reservation.reservation_id}/seat`}>
-              <button>Seat</button>
-            </a>
+              <button onClick={() => window.location.href = `reservations/${reservation.reservation_id}/seat`}>Seat</button>
           </li>
         ))}
       </ul>

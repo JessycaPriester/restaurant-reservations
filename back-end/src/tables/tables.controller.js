@@ -12,6 +12,30 @@ async function listTables(req, res) {
 
 
 
+const CREATE_REQUIRED_PROPERTIES = [
+    "table_name",
+    "capacity"
+]
+
+function hasRequiredPropertiesCreate(req, res, next) {
+    const { data = {}} = req.body
+    const missingProperties = [];
+  
+    for (const property of CREATE_REQUIRED_PROPERTIES) {
+      if (!data[property]) {
+        missingProperties.push(property);
+      }
+    }
+  
+    if (missingProperties.length > 0) {
+      return res.status(400).json({
+        error: `Missing required properties: ${missingProperties.join(', ')}`,
+      });
+    }
+  
+    next();
+  }
+
 function hasValidTableName(req, res, next) {
     const {table_name} = req.body.data;
 
@@ -33,6 +57,14 @@ function hasValidTableName(req, res, next) {
 
 function hasValidCapacity(req, res, next) {
     const {capacity} = req.body.data;
+    const isNumber = Number.isInteger(capacity);
+
+    if (!isNumber) {
+        return next({
+            status: 400,
+            message: "Capacity must be a number!"
+        })
+    } 
 
     if (capacity < 1) {
         return next({
@@ -75,10 +107,54 @@ function tableExists(req, res, next) {
         .catch(next)
 }
 
+
+
+const UPDATE_REQUIRED_PROPERTIES = [
+    "reservation_id"
+]
+
+function hasRequiredPropertiesUpdate(req, res, next) {
+    const { data = {}} = req.body
+    const missingProperties = [];
+  
+    for (const property of UPDATE_REQUIRED_PROPERTIES) {
+      if (!data[property]) {
+        missingProperties.push(property);
+      }
+    }
+  
+    if (missingProperties.length > 0) {
+      return res.status(400).json({
+        error: `Missing required properties: ${missingProperties.join(', ')}`,
+      });
+    }
+  
+    next();
+  }
+
+
+function seatCapacityValid(req, res, next) {
+
+}
+
+function tableIsUnoccuppied(req, res, next) {
+    const table = res.locals.table
+    const reservation_id = table.reservation_id
+
+    if (reservation_id) {
+        next({
+            status: 400,
+            message: "Table is already booked"
+        })
+    }
+    res.locals.table = table
+    next()
+}
+
 async function read(req, res, next) {
     const tableId = res.locals.table.table_id
     const table = await service.read(tableId);
-    res.json({data: table});
+    res.json({data: table}).status(200);
 }
 
 async function update(req, res, next) {
@@ -93,7 +169,7 @@ async function update(req, res, next) {
 }
 module.exports = {
     listTables,
-    create: [hasValidTableName, hasValidCapacity, create],
-    update: [tableExists, update],
+    create: [hasRequiredPropertiesCreate, hasValidTableName, hasValidCapacity, create],
+    update: [tableExists, hasRequiredPropertiesUpdate, tableIsUnoccuppied, update],
     read: [tableExists, read]
 }
