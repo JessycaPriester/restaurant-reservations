@@ -99,7 +99,7 @@ export async function listTables(params, signal) {
 }
 
 export async function updateTable(tableId, updatedTable, signal) {
-  const url = new URL(`${API_BASE_URL}/tables/${tableId}`);
+  const url = new URL(`${API_BASE_URL}/tables/${tableId}/seat`);
   const options = {
     method: "PUT",
     headers,
