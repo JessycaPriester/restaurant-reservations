@@ -43,6 +43,7 @@ function CreateTable() {
         const table = await createTable({table_name, capacity})
         console.log("Submitted");
         history.push(`/dashboard`)
+        window.location.reload()
     }
 
     return (
@@ -54,7 +55,7 @@ function CreateTable() {
                 </label>
                 <label htmlFor="capacity">
                     Capacity
-                    <input required type="number" id="capacity" min="1" onChange={handleCapacityChange}/>
+                    <input required type="number" id="capacity" name="capacity" min="1" onChange={handleCapacityChange}/>
                 </label>
                 <button type="submit">Submit</button>
                 <button type="cancel" onClick={cancelHandler}>Cancel</button>

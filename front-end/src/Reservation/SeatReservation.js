@@ -9,8 +9,6 @@ function SeatTable({tables}) {
     const [table, setTable] = useState({})
     const [error, setError] = useState(null)
 
-    console.log(reservation)
-
     useEffect(() => {
         const tableMatch = tables.find((table) => Number(table.table_id) === Number(tableId))
         setTable(tableMatch)
@@ -51,10 +49,14 @@ function SeatTable({tables}) {
             return;
         }
 
-        updateTable(tableId, {
-            ...table,
-            reservation_id: reservation.reservation_id,
-        })
+        const updatedTable = {
+            data: {
+                ...table,
+                reservation_id: reservation.reservation_id,
+            }
+        }
+        
+        updateTable(tableId, updatedTable)
 
         history.push('/dashboard')
     }

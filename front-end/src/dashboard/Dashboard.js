@@ -67,6 +67,12 @@ function Dashboard({ date, tables }) {
     history.push(`dashboard?date=${next(resDate)}`);
   }
 
+  function finishHandler() {
+    if (window.confirm("Is this table ready to seat new guests? This cannot be undone.")){
+      console.log("finished")
+ } 
+  }
+
   return (
     <main>
       <h1>Dashboard</h1>
@@ -76,14 +82,14 @@ function Dashboard({ date, tables }) {
       <ErrorAlert error={reservationsError} />
       <h3>Reservations</h3>
       <ul>
-        {reservations.map((reservation) => (
-          <li key={reservation.reservation_id}>
-            <strong>Name:</strong> {reservation.first_name} {reservation.last_name}<br />
-            <strong>Mobile Number:</strong> {reservation.mobile_number}<br />
-            <strong>Date:</strong> {reservation.reservation_date}<br />
-            <strong>Time:</strong> {reservation.reservation_time}<br />
-            <strong>Party Size:</strong> {reservation.people}<br />
-              <button onClick={() => window.location.href = `reservations/${reservation.reservation_id}/seat`}>Seat</button>
+        {reservations.map(({ reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people}) => (
+          <li key={reservation_id}>
+            <strong>Name:</strong> {first_name} {last_name}<br />
+            <strong>Mobile Number:</strong> {mobile_number}<br />
+            <strong>Date:</strong> {reservation_date}<br />
+            <strong>Time:</strong> {reservation_time}<br />
+            <strong>Party Size:</strong> {people}<br />
+              <button onClick={() => window.location.href = `/reservations/${reservation_id}/seat`}>Seat</button>
           </li>
         ))}
       </ul>
@@ -98,7 +104,10 @@ function Dashboard({ date, tables }) {
               <strong>Table Name:</strong> {table.table_name}<br />
               <strong>Table Capacity</strong> {table.capacity}<br />
               {table.reservation_id ? (
-                <p data-table-id-status={table.table_id}>Occupied</p>
+                <div>
+                  <p data-table-id-status={table.table_id}>Occupied</p>
+                  <button onClick={finishHandler} data-table-id-finish={table.table_id}>Finish</button>
+                </div>
               ) : (
                 <p>Free</p>
               )

@@ -49,7 +49,7 @@ function hasValidTableName(req, res, next) {
     if (table_name.length < 2) {
         return next({
             status: 400,
-            message: "Table name must be at least two characters long!"
+            message: "table_name"
         })
     };
     next();
@@ -63,7 +63,7 @@ function hasValidCapacity(req, res, next) {
     if (!isNumber) {
         return next({
             status: 400,
-            message: "Capacity must be a number!"
+            message: "capacity"
         })
     } 
 
@@ -102,12 +102,11 @@ function tableExists(req, res, next) {
         .then((table) => {
             if (table) {
                 res.locals.table = table;
-                console.log(1)
                 return next()
             }
             next({
                 status: 404, 
-                message: "Table cannot be found"
+                message: "99999"
             })
         })
         .catch(next)
@@ -119,24 +118,20 @@ function hasRequiredPropertiesUpdate(req, res, next) {
     const { data: {reservation_id} = {}} = req.body
   
     if (!reservation_id) {
-      return next({
-        status: 400,
-        message: "Reservation id is required"
-      })
+        return next({
+            status: 400,
+            message: "reservation_id"
+        })
     }
     res.locals.table = table;
-    console.log(2)
     next();
   }
 
-// Check that the seat form has a capacity that is equal to or larger than the reservation party size
-async function hasSufficientCapacity(req, res, next) {
-    const table = res.locals.table
+// Check that reservation exists
+async function reservationExists(req, res, next) {
     const {reservation_id} = req.body.data
-    console.log(reservation_id)
-
+    
     if (!reservation_id) {
-        // Handle the case where reservation_id is not present
         next({
             status: 400,
             message: "Reservation ID is missing in the request body",
@@ -145,32 +140,47 @@ async function hasSufficientCapacity(req, res, next) {
     }
 
     const reservation = await reservationsService.read(reservation_id)
-    console.log(reservation_id)
+
+    if (!reservation) {
+        next({
+            status: 404,
+            message: "999"
+        })
+    }
+    res.locals.reservation = reservation
+    next()
+}
+
+// Check that the seat form has a capacity that is equal to or larger than the reservation party size
+async function hasSufficientCapacity(req, res, next) {
+    const table = res.locals.table
+    const reservation = res.locals.reservation
 
     if (table.capacity < reservation.people) {
         next({
             status: 400, 
-            message: "Capacity is not sufficient for party size"
+            message: "capacity"
         })
     }
     res.locals.table = table
-    console.log(3)
     next();
   }
 
 // Check that the table is unoccupied 
-function tableIsUnoccuppied(req, res, next) {
+function tableIsUnoccupied(req, res, next) {
     const table = res.locals.table
     const reservation_id = table.reservation_id
 
+    console.log(reservation_id)
+
     if (reservation_id) {
+        console.log("booked")
         next({
             status: 400,
             message: "Table is already booked"
         })
     }
     res.locals.table = table
-    console.log(4)
     next()
 }
 
@@ -185,20 +195,20 @@ async function read(req, res, next) {
 async function update(req, res, next) {
     const table = res.locals.table
     const updatedTable = {
-        ...req.body,
-        table_id: table.table_id
-    }
-    console.log(updatedTable.data)
+        table_id: table.table_id,
+        reservation_id: req.body.reservation_id,
+    };
+
+    console.log("updating")
     await service.update(updatedTable)
+    console.log("responding")
     res.json({ data: await service.read(updatedTable.table_id)})
 }
-
-
 
 
 module.exports = {
     listTables,
     create: [hasRequiredPropertiesCreate, hasValidTableName, hasValidCapacity, create],
-    update: [tableExists, hasRequiredPropertiesUpdate, hasSufficientCapacity, tableIsUnoccuppied, update],
+    update: [tableExists, hasRequiredPropertiesUpdate,reservationExists, hasSufficientCapacity, tableIsUnoccupied, update],
     read: [tableExists, read]
 }
