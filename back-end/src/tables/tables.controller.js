@@ -177,7 +177,7 @@ function tableIsUnoccupied(req, res, next) {
         console.log("booked")
         next({
             status: 400,
-            message: "Table is already booked"
+            message: "occupied"
         })
     }
     res.locals.table = table
@@ -196,7 +196,7 @@ async function update(req, res, next) {
     const table = res.locals.table
     const updatedTable = {
         table_id: table.table_id,
-        reservation_id: req.body.reservation_id,
+        reservation_id: req.body.data.reservation_id,
     };
 
     console.log("updating")
