@@ -40,13 +40,13 @@ function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
       <Route path="/dashboard">
-        <Dashboard date={today()} tables={tables} />
+        <Dashboard date={today()} tables={tables} setTables={setTables}/>
       </Route>
       <Route path="/reservations/new">
         <CreateReservation />
       </Route>
       <Route path="/tables/new">
-        <CreateTable />
+        <CreateTable setTables={setTables}/>
       </Route>
       <Route path="/reservations/:reservation_id/seat">
         <SeatReservation tables={tables}/>

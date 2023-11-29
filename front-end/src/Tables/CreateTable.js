@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import { useHistory } from "react-router-dom";
 import { createTable } from "../utils/api";
 
-function CreateTable() {
+function CreateTable({setTables}) {
     const history = useHistory();
 
     const [ table_name, setTableName ] = useState("");
@@ -41,9 +41,9 @@ function CreateTable() {
         }
 
         const table = await createTable({table_name, capacity})
+        setTables((prevTables) => [...prevTables, table]);
         console.log("Submitted");
         history.push(`/dashboard`)
-        window.location.reload()
     }
 
     return (

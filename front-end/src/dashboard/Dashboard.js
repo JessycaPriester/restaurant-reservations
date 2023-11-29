@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
-import { listReservations, listTables } from "../utils/api";
+import { useHistory, useLocation, Link } from "react-router-dom";
+import { deleteSeatAssignment, listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
 import { previous,today, next } from "../utils/date-time";
@@ -11,7 +11,7 @@ import { previous,today, next } from "../utils/date-time";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ date, tables }) {
+function Dashboard({ date, tables, setTables }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
   //const [tablesError, setTablesError] = useState(null)
@@ -67,10 +67,17 @@ function Dashboard({ date, tables }) {
     history.push(`dashboard?date=${next(resDate)}`);
   }
 
-  function finishHandler() {
+  async function finishHandler(table_id) {
     if (window.confirm("Is this table ready to seat new guests? This cannot be undone.")){
-      console.log("finished")
- } 
+      await deleteSeatAssignment(table_id)
+
+      const table = tables.find((table) => table.table_id === table_id)
+
+      setTables((prevTables) =>
+      prevTables.map((t) =>
+        t.table_id === table.table_id ? { ...t, reservation_id: null } : t
+      )); 
+    } 
   }
 
   return (
@@ -89,7 +96,9 @@ function Dashboard({ date, tables }) {
             <strong>Date:</strong> {reservation_date}<br />
             <strong>Time:</strong> {reservation_time}<br />
             <strong>Party Size:</strong> {people}<br />
-              <button onClick={() => window.location.href = `/reservations/${reservation_id}/seat`}>Seat</button>
+            <a href="/reservations/${reservation.reservation_id}/seat">
+              <button>Seat</button>
+            </a>
           </li>
         ))}
       </ul>
@@ -106,10 +115,10 @@ function Dashboard({ date, tables }) {
               {table.reservation_id ? (
                 <div>
                   <p data-table-id-status={table.table_id}>Occupied</p>
-                  <button onClick={finishHandler} data-table-id-finish={table.table_id}>Finish</button>
+                  <button onClick={() => finishHandler(table.table_id)} data-table-id-finish={table.table_id}>Finish</button>
                 </div>
               ) : (
-                <p>Free</p>
+                <p data-table-id-status={table.table_id}>Free</p>
               )
             }
             </li>

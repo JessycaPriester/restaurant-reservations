@@ -205,10 +205,30 @@ async function update(req, res, next) {
     res.json({ data: await service.read(updatedTable.table_id)})
 }
 
+function tableIsOccupied(req, res, next) {
+    const table = res.locals.table
+   
+    if (!table.reservation_id) {
+        next({
+            status: 400,
+            message: "Table is not occupied"
+        })
+    }
+    res.locals.table = table
+    next()
+}
+
+async function deleteTableAssignment(req, res, next) {
+    const table = res.locals.table
+    await service.deleteTableAssignment(table.table_id)
+    res.status(200)
+}
+
 
 module.exports = {
     listTables,
     create: [hasRequiredPropertiesCreate, hasValidTableName, hasValidCapacity, create],
     update: [tableExists, hasRequiredPropertiesUpdate,reservationExists, hasSufficientCapacity, tableIsUnoccupied, update],
-    read: [tableExists, read]
+    read: [tableExists, read],
+    delete: [tableExists, tableIsOccupied, deleteTableAssignment]
 }

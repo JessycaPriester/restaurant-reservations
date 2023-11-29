@@ -25,9 +25,16 @@ function update(updatedTable) {
         .returning("*")
 }
 
+function deleteTableAssignment(table_id) {
+    return knex('tables')
+        .where({ table_id: table_id})
+        .update({ reservation_id: null})
+}
+
 module.exports = {
     listTables,
     create,
     read, 
     update,
+    deleteTableAssignment
 }
