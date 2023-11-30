@@ -5,6 +5,9 @@ import ErrorAlert from "../layout/ErrorAlert";
 
 import { previous,today, next } from "../utils/date-time";
 
+import ManageTable from "../Tables/ManageTable";
+import ManageReservation from "../Reservation/ManageReservation";
+
 /**
  * Defines the dashboard page.
  * @param date
@@ -30,6 +33,7 @@ function Dashboard({ date, tables, setTables }) {
     }
   }, [queryDate, date]);
 
+
   useEffect(() => {
     const abortController = new AbortController();
     setReservationsError(null);
@@ -40,6 +44,16 @@ function Dashboard({ date, tables, setTables }) {
 
     return () => abortController.abort();
   }, [resDate]);
+
+  useEffect(() => {
+    const abortController = new AbortController();
+  
+    listTables(abortController.signal)
+      .then(setTables)
+      .catch(console.error);
+  
+    return () => abortController.abort();
+  }, [tables]);
 
  /* useEffect(() => {
     const abortController = new AbortController();
@@ -67,7 +81,7 @@ function Dashboard({ date, tables, setTables }) {
     history.push(`dashboard?date=${next(resDate)}`);
   }
 
-  async function finishHandler(table_id) {
+  /*async function finishHandler(table_id) {
     if (window.confirm("Is this table ready to seat new guests? This cannot be undone.")){
       await deleteSeatAssignment(table_id)
 
@@ -78,7 +92,7 @@ function Dashboard({ date, tables, setTables }) {
         t.table_id === table.table_id ? { ...t, reservation_id: null } : t
       )); 
     } 
-  }
+  }*/
 
   return (
     <main>
@@ -90,16 +104,7 @@ function Dashboard({ date, tables, setTables }) {
       <h3>Reservations</h3>
       <ul>
         {reservations.map(({ reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people}) => (
-          <li key={reservation_id}>
-            <strong>Name:</strong> {first_name} {last_name}<br />
-            <strong>Mobile Number:</strong> {mobile_number}<br />
-            <strong>Date:</strong> {reservation_date}<br />
-            <strong>Time:</strong> {reservation_time}<br />
-            <strong>Party Size:</strong> {people}<br />
-            <a href="/reservations/${reservation.reservation_id}/seat">
-              <button>Seat</button>
-            </a>
-          </li>
+          <ManageReservation reservation_id={reservation_id} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people} />
         ))}
       </ul>
       <div>
@@ -108,23 +113,16 @@ function Dashboard({ date, tables, setTables }) {
         <button type="button" onClick={nextHandler}>Next</button>
       </div>
       <h3>Tables</h3>
+        <ul>
           {tables.map((table) => (
-            <li key={table.table_id}>
-              <strong>Table Name:</strong> {table.table_name}<br />
-              <strong>Table Capacity</strong> {table.capacity}<br />
-              {table.reservation_id ? (
-                <div>
-                  <p data-table-id-status={table.table_id}>Occupied</p>
-                  <button onClick={() => finishHandler(table.table_id)} data-table-id-finish={table.table_id}>Finish</button>
-                </div>
-              ) : (
-                <p data-table-id-status={table.table_id}>Free</p>
-              )
-            }
-            </li>
+            <ManageTable key={table.table_id} table={table} setTables={setTables} />
           ))}
+        </ul>
     </main>
   );
 }
 
 export default Dashboard;
+
+
+

@@ -221,7 +221,7 @@ function tableIsOccupied(req, res, next) {
 async function deleteTableAssignment(req, res, next) {
     const table = res.locals.table
     await service.deleteTableAssignment(table.table_id)
-    res.status(200)
+    res.json({ data: await service.read(table.table_id)})
 }
 
 

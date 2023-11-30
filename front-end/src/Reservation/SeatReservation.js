@@ -28,12 +28,17 @@ function SeatTable({tables}) {
             setReservation(reservationMatch)
           })
           .catch(setReservationsError);
+
+          console.log(reservation)
     
         return () => abortController.abort();
       }, [params.reservation_id]);
 
 
-    const handleTableChange = (event) => setTableId(event.target.value)
+    const handleTableChange = (event) => {
+        console.log(event.target.value)
+        setTableId(event.target.value)
+    }
 
     const history = useHistory()
 
@@ -43,7 +48,6 @@ function SeatTable({tables}) {
 
     const submitHandler = async(event) => {
         event.preventDefault();
-
         if (reservation.people > table.capacity) {
             setError("Party size must be less than or equal to table capacity");
             return;
@@ -55,11 +59,12 @@ function SeatTable({tables}) {
                 reservation_id: reservation.reservation_id,
             }
         }
-        
+
         updateTable(tableId, updatedTable)
 
         history.push('/dashboard')
     }
+
 
     return (
         <div>
