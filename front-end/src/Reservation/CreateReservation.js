@@ -15,10 +15,15 @@ function CreateReservation() {
     const [ people, setPartySize ] = useState(1)
     const [error, setError] = useState(null)
 
+    console.log(mobile_number)
     // Change handlers for input boxes
     const handleFirstNameChange = (event) => setFirstName(event.target.value)
     const handleLastNameChange = (event) => setLastName(event.target.value);
-    const handleMobileNumberChange = (event) => setMobileNumber(event.target.value);
+    const handleMobileNumberChange = (event) => {
+        const number = event.target.value
+        const formattedPhoneNumber = number.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
+        setMobileNumber(formattedPhoneNumber)
+    }
     const handleReservationDateChange = (event) => setReservationDate(event.target.value);
     const handleReservationTimeChange= (event) => setReservationTime(event.target.value);
     const handlePartySizeChange = (event) => setPartySize(Number(event.target.value));

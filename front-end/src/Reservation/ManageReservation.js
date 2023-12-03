@@ -14,9 +14,13 @@ function ManageReservation({ reservation_id, first_name, last_name, mobile_numbe
             {status === "booked" && (
                 <a href={`/reservations/${reservation_id}/seat`}>
                     <button>Seat</button>
+                    <button>Edit</button>
                 </a>
             )}
-
+            <a href={`/reservations/${reservation_id}/edit`}>
+                <button>Edit</button>
+            </a>
+            <button data-reservation-id-cancel={reservation_id}>Cancel</button>
       </li>
     )
 }

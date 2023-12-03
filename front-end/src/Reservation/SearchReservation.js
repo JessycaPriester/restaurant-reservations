@@ -1,20 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { listReservations, searchReservation } from "../utils/api"
+import ManageReservation from "./ManageReservation";
 
 function SearchReservation() {
     const [phoneNumber, setPhoneNumber] = useState('')
+    const [reservations, setReservations] = useState([])
 
     const phoneNumberChangeHandler = (event) => {
         const number = event.target.value
+
         const formattedPhoneNumber = number.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
         setPhoneNumber(formattedPhoneNumber)
     }
 
-    const submitHandler = (event) => {
+    const submitHandler = async(event) => {
         event.preventDefault()
-        console.log("donzo")
+        
+        const reservationMatch = await searchReservation(phoneNumber);
+        setReservations(reservationMatch)
+
+                console.log(reservations)
+
     }
 
-    console.log(phoneNumber)
+    useEffect(() => {
+        console.log("Match found")
+    }, [reservations])
 
     return (
         <div>
@@ -23,8 +34,17 @@ function SearchReservation() {
                     Phone Number:
                     <input required min="10" type="text" id="mobile_number" name="mobile_number" placeholder="Enter a customer's phone number" onChange={phoneNumberChangeHandler}/>
                 </label>
-                <button type="submit">Find</button>
+                <button type="submit" disabled={phoneNumber.length < 10}>Find</button>
             </form>
+            {reservations.length === 0 ? (
+                <p>/No reservations found/</p>
+            ) : (
+                <ul>
+                    {reservations.map(({ reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status }) => (
+                        <ManageReservation reservation_id={reservation_id} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people} status={status} />
+                    ))}
+                </ul>
+            )}
         </div>
     )
 }

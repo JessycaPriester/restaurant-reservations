@@ -7,11 +7,21 @@ const service = require("./reservations.service")
 async function list(request, response) {
   const date = request.query.date;
   console.log(date)
-  const reservations = await service.list(date);
-  console.log(reservations)
-  const res = reservations.filter(
-    (reservation) => reservation.status !== "finished"
-  );
+  const phoneNumber = request.query.mobile_number;
+  console.log(phoneNumber)
+  let res
+
+  if (date) {
+    const reservations = await service.list(date)
+    res = reservations.filter((reservation) => {
+      return reservation.status !== "finished"
+    }); 
+  } else if (phoneNumber) {
+    res = await service.search(phoneNumber)
+  } else {
+   res = await service.list()
+  }
+
   response.json({ data: res });
 }
 
