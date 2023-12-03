@@ -25,10 +25,17 @@ function create(newReservation) {
         .insert(newReservation)
 }
 
+function update(reservation_id, newStatus) {
+    return knex("reservations")
+        .where({ reservation_id: reservation_id})
+        .update({ status: newStatus})
+        .returning("*")
+}
 
 
 module.exports = {
     list,
     create,
     read,
+    update
 }

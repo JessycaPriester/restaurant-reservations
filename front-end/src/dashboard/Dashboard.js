@@ -14,17 +14,18 @@ import ManageReservation from "../Reservation/ManageReservation";
  *  the date for which the user wants to view reservations.
  * @returns {JSX.Element}
  */
-function Dashboard({ date, tables, setTables }) {
+function Dashboard({ date }) {
   const [reservations, setReservations] = useState([]);
   const [reservationsError, setReservationsError] = useState(null);
-  //const [tablesError, setTablesError] = useState(null)
   const [resDate, setResDate] = useState(null);
-  //const [tables, setTables] = useState([])
+  const [tables, setTables] = useState([])
+  const [tablesError, setTablesError] = useState(null)
 
 
   const location = useLocation();
   const queryDate = new URLSearchParams(location.search).get('date');
   
+  // Every time the date in the query changes or the date/today passed down from Routes.js passes, set the resDate to the new date
   useEffect(() => {
     if (queryDate) {
       setResDate(queryDate);
@@ -34,6 +35,7 @@ function Dashboard({ date, tables, setTables }) {
   }, [queryDate, date]);
 
 
+  // Every time the resDate changes get the reservations for this date and then set reservations to these reservations
   useEffect(() => {
     const abortController = new AbortController();
     setReservationsError(null);
@@ -45,17 +47,10 @@ function Dashboard({ date, tables, setTables }) {
     return () => abortController.abort();
   }, [resDate]);
 
-  useEffect(() => {
-    const abortController = new AbortController();
-  
-    listTables(abortController.signal)
-      .then(setTables)
-      .catch(console.error);
-  
-    return () => abortController.abort();
-  }, [tables]);
 
- /* useEffect(() => {
+
+  // When the page is first rendered get the tables and set the tables state to these tables
+  useEffect(() => {
     const abortController = new AbortController();
     setTablesError(null);
 
@@ -63,36 +58,45 @@ function Dashboard({ date, tables, setTables }) {
       .then(setTables)
       .catch(setTablesError)
 
-  }, []) */
+  }, [])
+
+
 
 
   const history = useHistory();
 
-
+  // When the previous button is pressed go to the previous dates page
   function previousHandler() {
     history.push(`dashboard?date=${previous(resDate)}`);
   }
 
+  // When the today button is pressed go to todays dates page
   function todayHandler() {
     history.push(`dashboard?date=${today()}`);
   }
 
+  // When the next button is pressed go to the next dates page
   function nextHandler() {
     history.push(`dashboard?date=${next(resDate)}`);
   }
 
-  /*async function finishHandler(table_id) {
-    if (window.confirm("Is this table ready to seat new guests? This cannot be undone.")){
-      await deleteSeatAssignment(table_id)
+  // When the finish button is pressed set tables to the updated tables and set reservations to the updated reservations
+  async function handleFinishTable(table_id) {
+    console.log(resDate)
+    const updatedReservations = listReservations(resDate)
+    console.log(updatedReservations)
+    //setReservations(updatedReservations)  
 
-      const table = tables.find((table) => table.table_id === table_id)
+    const updatedTables = await listTables()
+    setTables(updatedTables)
+  }
 
-      setTables((prevTables) =>
-      prevTables.map((t) =>
-        t.table_id === table.table_id ? { ...t, reservation_id: null } : t
-      )); 
-    } 
-  }*/
+  // If tables every changes, rerender the page
+  useEffect(() => {
+    console.log("Tables and/or reservations have been updated")
+  }, [tables, reservations]);
+
+
 
   return (
     <main>
@@ -103,8 +107,8 @@ function Dashboard({ date, tables, setTables }) {
       <ErrorAlert error={reservationsError} />
       <h3>Reservations</h3>
       <ul>
-        {reservations.map(({ reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people}) => (
-          <ManageReservation reservation_id={reservation_id} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people} />
+        {reservations.map(({ reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status}) => (
+          <ManageReservation reservation_id={reservation_id} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people} status={status}/>
         ))}
       </ul>
       <div>
@@ -115,7 +119,7 @@ function Dashboard({ date, tables, setTables }) {
       <h3>Tables</h3>
         <ul>
           {tables.map((table) => (
-            <ManageTable key={table.table_id} table={table} setTables={setTables} />
+            <ManageTable key={table.table_id} table={table} handleFinishTable={handleFinishTable} />
           ))}
         </ul>
     </main>

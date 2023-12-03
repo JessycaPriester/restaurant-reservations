@@ -9,6 +9,7 @@ import { today } from "../utils/date-time";
 import CreateReservation from "../Reservation/CreateReservation";
 import CreateTable from "../Tables/CreateTable";
 import SeatReservation from "../Reservation/SeatReservation";
+import SearchReservation from "../Reservation/SearchReservation"
 
 /**
  * Defines all the routes for the application.
@@ -21,6 +22,7 @@ function Routes() {
   const [tables, setTables] = useState([])
   const [tablesError, setTablesError] = useState(null)
 
+  // When the page is first rendered get the tables and set the tables state to these
   useEffect(() => {
     const abortController = new AbortController();
     setTablesError(null);
@@ -30,6 +32,8 @@ function Routes() {
       .catch(setTablesError)
 
   }, [])
+
+
 
 
   
@@ -43,7 +47,7 @@ function Routes() {
         <Redirect to={"/dashboard"} />
       </Route>
       <Route path="/dashboard">
-        <Dashboard date={today()} tables={tables} setTables={setTables}/>
+        <Dashboard date={today()}/>
       </Route>
       <Route path="/reservations/new">
         <CreateReservation />
@@ -52,7 +56,10 @@ function Routes() {
         <CreateTable setTables={setTables}/>
       </Route>
       <Route path="/reservations/:reservation_id/seat">
-        <SeatReservation tables={tables}/>
+        <SeatReservation />
+      </Route>
+      <Route path="/search">
+        <SearchReservation />
       </Route>
       <Route>
         <NotFound />

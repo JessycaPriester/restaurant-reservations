@@ -6,7 +6,9 @@ const service = require("./reservations.service")
  */
 async function list(request, response) {
   const date = request.query.date;
+  console.log(date)
   const reservations = await service.list(date);
+  console.log(reservations)
   const res = reservations.filter(
     (reservation) => reservation.status !== "finished"
   );
@@ -23,7 +25,7 @@ function reservationExists(req, res, next) {
           }
           next({
               status: 404, 
-              message: "Reservation cannot be found"
+              message: "99"
           })
       })
       .catch(next)
@@ -163,6 +165,25 @@ function hasValidTime(req, res, next) {
   next()
 }
 
+function reservationStatusIsBooked(req, res, next) {
+  const { status } = req.body.data
+
+  if (status === "seated") {
+    return next({
+      status: 400,
+      message: 'seated'
+    })
+  }
+
+  if (status === "finished") {
+    return next({
+      status: 400,
+      message: 'finished'
+    })
+  }
+  next()
+}
+
 async function create(req, res, next) {
   try {
     const { data: { first_name, last_name, mobile_number, reservation_date, reservation_time, people } = {} } = req.body;
@@ -182,9 +203,45 @@ async function create(req, res, next) {
   }
 }
 
+function reservationStatusIsValid(req, res, next) {
+  const reservation = res.locals.reservation
+  const requestStatus = req.body.data.status
+  //console.log(req.body.data.status)
+  console.log(requestStatus)
+
+  if (reservation.status === "finished") {
+    return next({
+      status: 400,
+      message: 'finished'
+    })
+  }
+
+  if (requestStatus !== "booked") {
+    if (requestStatus !== "seated") {
+      if (requestStatus !== "finished") {
+        return next({
+          status: 400,
+          message: 'unknown'
+        })
+      }
+    }
+  } 
+  res.locals.reservation = reservation
+  next()
+}
+
+async function update(req, res, next) {
+  const {status} = req.body.data
+  const reservation = res.locals.reservation
+  
+  await service.update(reservation.reservation_id, status)
+  res.json({ data: await service.read(reservation.reservation_id)})
+}
+
 
 module.exports = {
   list,
-  create: [hasRequiredProperties, hasValidProperties, hasValidDate, hasValidTime, create],
+  create: [hasRequiredProperties, hasValidProperties, hasValidDate, hasValidTime, reservationStatusIsBooked, create],
   read: [reservationExists, read],
+  update: [reservationExists, reservationStatusIsValid, update]
 };

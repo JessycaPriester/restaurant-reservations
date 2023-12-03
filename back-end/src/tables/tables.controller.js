@@ -163,6 +163,7 @@ async function hasSufficientCapacity(req, res, next) {
         })
     }
     res.locals.table = table
+    res.locals.reservation = reservation
     next();
   }
 
@@ -171,10 +172,8 @@ function tableIsUnoccupied(req, res, next) {
     const table = res.locals.table
     const reservation_id = table.reservation_id
 
-    console.log(reservation_id)
 
     if (reservation_id) {
-        console.log("booked")
         next({
             status: 400,
             message: "occupied"
@@ -183,6 +182,21 @@ function tableIsUnoccupied(req, res, next) {
     res.locals.table = table
     next()
 }
+
+// Check that the reservation is not already seated 
+function reservationIsNotSeated(req, res, next) {
+    const reservation = res.locals.reservation
+    console.log(reservation.status)
+    console.log("HERE")
+    if (reservation.status === "seated") {
+        next({
+            status: 400, 
+            message: "seated"
+        })
+    }
+    next()
+}
+
 
 // Finds the table
 async function read(req, res, next) {
@@ -199,9 +213,8 @@ async function update(req, res, next) {
         reservation_id: req.body.data.reservation_id,
     };
 
-    console.log("updating")
+    await reservationsService.update(req.body.data.reservation_id, "seated")
     await service.update(updatedTable)
-    console.log("responding")
     res.json({ data: await service.read(updatedTable.table_id)})
 }
 
@@ -220,7 +233,10 @@ function tableIsOccupied(req, res, next) {
 
 async function deleteTableAssignment(req, res, next) {
     const table = res.locals.table
+
+    await reservationsService.update(table.reservation_id, "finished")
     await service.deleteTableAssignment(table.table_id)
+
     res.json({ data: await service.read(table.table_id)})
 }
 
@@ -228,7 +244,7 @@ async function deleteTableAssignment(req, res, next) {
 module.exports = {
     listTables,
     create: [hasRequiredPropertiesCreate, hasValidTableName, hasValidCapacity, create],
-    update: [tableExists, hasRequiredPropertiesUpdate,reservationExists, hasSufficientCapacity, tableIsUnoccupied, update],
+    update: [tableExists, hasRequiredPropertiesUpdate,reservationExists, hasSufficientCapacity, tableIsUnoccupied, reservationIsNotSeated, update],
     read: [tableExists, read],
     delete: [tableExists, tableIsOccupied, deleteTableAssignment]
 }
