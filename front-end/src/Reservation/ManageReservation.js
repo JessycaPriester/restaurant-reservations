@@ -2,7 +2,16 @@ import React, { useState } from "react";
 
 import { updateReservationStatus } from "../utils/api";
 
-function ManageReservation({ reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status }) {
+function ManageReservation({ handleCancelReservation, reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status }) {
+    function cancelHandler() {
+        if (window.confirm("Do you want to cancel this reservation? This cannot be undone.")) {
+            const newStatus = "cancelled"
+            updateReservationStatus(reservation_id, newStatus)
+
+            handleCancelReservation()
+        }
+    }
+
     return (
         <li key={reservation_id}>
             <strong>Name:</strong> {first_name} {last_name}<br />
@@ -14,13 +23,12 @@ function ManageReservation({ reservation_id, first_name, last_name, mobile_numbe
             {status === "booked" && (
                 <a href={`/reservations/${reservation_id}/seat`}>
                     <button>Seat</button>
-                    <button>Edit</button>
                 </a>
             )}
             <a href={`/reservations/${reservation_id}/edit`}>
                 <button>Edit</button>
             </a>
-            <button data-reservation-id-cancel={reservation_id}>Cancel</button>
+            <button data-reservation-id-cancel={reservation_id} onClick={cancelHandler}>Cancel</button>
       </li>
     )
 }

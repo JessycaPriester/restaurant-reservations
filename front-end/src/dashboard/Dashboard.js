@@ -21,6 +21,7 @@ function Dashboard({ date }) {
   const [tables, setTables] = useState([])
   const [tablesError, setTablesError] = useState(null)
 
+  console.log(reservations)
 
   const location = useLocation();
   const queryDate = new URLSearchParams(location.search).get('date');
@@ -91,6 +92,12 @@ function Dashboard({ date }) {
     setTables(updatedTables)
   }
 
+  async function handleCancelReservation() {
+    const updatedReservations = await listReservations(resDate)
+    console.log(updatedReservations)
+    setReservations(updatedReservations)
+  }
+
   // If tables every changes, rerender the page
   useEffect(() => {
     console.log("Tables and/or reservations have been updated")
@@ -108,7 +115,7 @@ function Dashboard({ date }) {
       <h3>Reservations</h3>
       <ul>
         {reservations.map(({ reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status}) => (
-          <ManageReservation reservation_id={reservation_id} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people} status={status}/>
+          <ManageReservation handleCancelReservation={handleCancelReservation} reservation_id={reservation_id} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people} status={status}/>
         ))}
       </ul>
       <div>

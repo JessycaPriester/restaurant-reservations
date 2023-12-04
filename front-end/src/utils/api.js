@@ -68,6 +68,14 @@ export async function listReservations(params, signal) {
     .then(formatReservationTime)
 }
 
+export async function readReservation(reservation_id) {
+  const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
+
+    return await fetchJson(url, { headers }, [])
+    .then(formatReservationDate)
+    .then(formatReservationTime)
+}
+
 export async function searchReservation(phoneNumber) {
   const url = new URL(`${API_BASE_URL}/reservations?mobile_number=${phoneNumber}`);
 
@@ -141,6 +149,20 @@ export async function updateReservationStatus(reservation_id, newStatus, signal)
     })
   }
   return await fetchJson(url, options, newStatus)
+}
+
+export async function updateReservation(reservation_id, updatedReservation) {
+  const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
+
+  const options = {
+    method: "PUT",
+    headers,
+    body: JSON.stringify({
+      data: updatedReservation
+    })
+  }
+
+  return await fetchJson(url, options, updatedReservation)
 }
 
 

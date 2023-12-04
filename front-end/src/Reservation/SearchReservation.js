@@ -23,6 +23,11 @@ function SearchReservation() {
 
     }
 
+    async function handleCancelReservation() {
+        const updatedReservations = await searchReservation(phoneNumber)
+        setReservations(updatedReservations)
+    }
+
     useEffect(() => {
         console.log("Match found")
     }, [reservations])
@@ -41,7 +46,7 @@ function SearchReservation() {
             ) : (
                 <ul>
                     {reservations.map(({ reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status }) => (
-                        <ManageReservation reservation_id={reservation_id} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people} status={status} />
+                        <ManageReservation handleCancelReservation={handleCancelReservation} reservation_id={reservation_id} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people} status={status} />
                     ))}
                 </ul>
             )}

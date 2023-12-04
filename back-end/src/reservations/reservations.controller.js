@@ -26,6 +26,7 @@ async function list(request, response) {
 }
 
 function reservationExists(req, res, next) {
+  console.log(req.params.reservationId)
   service
       .read(req.params.reservationId)
       .then((reservation) => {
@@ -169,7 +170,7 @@ function hasValidTime(req, res, next) {
   if (reservation_time < '10:30' || reservation_time > '21:30') {
     return next({
       status: 400,
-      message: 'Reservation time is outside hours of operation.'
+      message: 'reservation_time'
     })
   }
   next()
@@ -229,10 +230,12 @@ function reservationStatusIsValid(req, res, next) {
   if (requestStatus !== "booked") {
     if (requestStatus !== "seated") {
       if (requestStatus !== "finished") {
-        return next({
-          status: 400,
-          message: 'unknown'
-        })
+        if (requestStatus !== "cancelled") {
+          return next({
+            status: 400,
+            message: 'unknown'
+          })
+        }
       }
     }
   } 
@@ -248,10 +251,25 @@ async function update(req, res, next) {
   res.json({ data: await service.read(reservation.reservation_id)})
 }
 
+async function updateReservation(req, res, next) {
+  const reservation = res.locals.reservation
+
+  console.log(req.body)
+
+  updatedReservation = {
+    ...req.body.data,
+    reservation_id: reservation.reservation_id
+  }
+
+  await service.updateReservation(updatedReservation)
+  res.json({ data: await service.read(reservation.reservation_id) })
+}
+
 
 module.exports = {
   list,
   create: [hasRequiredProperties, hasValidProperties, hasValidDate, hasValidTime, reservationStatusIsBooked, create],
   read: [reservationExists, read],
-  update: [reservationExists, reservationStatusIsValid, update]
+  update: [reservationExists, reservationStatusIsValid, update],
+  updateReservation: [hasRequiredProperties, hasValidProperties, hasValidDate, hasValidTime, reservationExists, updateReservation]
 };
