@@ -1,7 +1,7 @@
 const service = require("./tables.service");
 const reservationsService = require("../reservations/reservations.service");
 const { table } = require("../db/connection");
-//const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
+const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 //const hasProperties = require("../errors/hasProperties");
 
 // List all the tables
@@ -243,8 +243,8 @@ async function deleteTableAssignment(req, res, next) {
 
 module.exports = {
     listTables,
-    create: [hasRequiredPropertiesCreate, hasValidTableName, hasValidCapacity, create],
-    update: [tableExists, hasRequiredPropertiesUpdate,reservationExists, hasSufficientCapacity, tableIsUnoccupied, reservationIsNotSeated, update],
-    read: [tableExists, read],
-    delete: [tableExists, tableIsOccupied, deleteTableAssignment]
+    create: [hasRequiredPropertiesCreate, hasValidTableName, hasValidCapacity, asyncErrorBoundary(create)],
+    update: [tableExists, hasRequiredPropertiesUpdate,reservationExists, hasSufficientCapacity, tableIsUnoccupied, reservationIsNotSeated, asyncErrorBoundary(update)],
+    read: [tableExists, asyncErrorBoundary(read)],
+    delete: [tableExists, tableIsOccupied, asyncErrorBoundary(deleteTableAssignment)]
 }

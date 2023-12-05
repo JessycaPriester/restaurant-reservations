@@ -21,11 +21,12 @@ function Dashboard({ date }) {
   const [tables, setTables] = useState([])
   const [tablesError, setTablesError] = useState(null)
 
-  console.log(reservations)
-
   const location = useLocation();
+
   const queryDate = new URLSearchParams(location.search).get('date');
-  
+
+  // Display the Reservations and the tables
+
   // Every time the date in the query changes or the date/today passed down from Routes.js passes, set the resDate to the new date
   useEffect(() => {
     if (queryDate) {
@@ -62,7 +63,7 @@ function Dashboard({ date }) {
   }, [])
 
 
-
+  // Handlers for buttons
 
   const history = useHistory();
 
@@ -134,6 +135,3 @@ function Dashboard({ date }) {
 }
 
 export default Dashboard;
-
-
-

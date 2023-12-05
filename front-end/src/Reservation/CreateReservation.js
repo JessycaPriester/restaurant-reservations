@@ -37,7 +37,7 @@ function CreateReservation() {
     }
 
     const handlePeopleChildStateChange = (childState) => {
-        setPeople(childState);
+        setPeople(Number(childState));
     }
 
     // Handlers for buttons
@@ -77,6 +77,7 @@ function CreateReservation() {
         }
 
         const resDate = new Date(reservationDate)
+
 
         if (resDate < currentDate) {
             setError("Invalid reservation date. Please choose a future date.");

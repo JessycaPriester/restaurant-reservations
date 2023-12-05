@@ -1,6 +1,7 @@
 const knex = require("../db/connection")
 const reservations = require('../db/seeds/00-reservations.json')
 const service = require("./reservations.service")
+const asyncErrorBoundary = require("../errors/asyncErrorBoundary")
 /**
  * List handler for reservation resources
  */
@@ -268,8 +269,8 @@ async function updateReservation(req, res, next) {
 
 module.exports = {
   list,
-  create: [hasRequiredProperties, hasValidProperties, hasValidDate, hasValidTime, reservationStatusIsBooked, create],
-  read: [reservationExists, read],
-  update: [reservationExists, reservationStatusIsValid, update],
-  updateReservation: [hasRequiredProperties, hasValidProperties, hasValidDate, hasValidTime, reservationExists, updateReservation]
+  create: [hasRequiredProperties, hasValidProperties, hasValidDate, hasValidTime, reservationStatusIsBooked, asyncErrorBoundary(create)],
+  read: [reservationExists, asyncErrorBoundary(read)],
+  update: [reservationExists, reservationStatusIsValid, asyncErrorBoundary(update)],
+  updateReservation: [hasRequiredProperties, hasValidProperties, hasValidDate, hasValidTime, reservationExists, asyncErrorBoundary(updateReservation)]
 };

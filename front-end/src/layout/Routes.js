@@ -20,6 +20,7 @@ import EditReservation from "../Reservation/EditReservation";
  * @returns {JSX.Element}
  */
 function Routes() {
+  
   const [tables, setTables] = useState([])
   const [tablesError, setTablesError] = useState(null)
 
@@ -33,11 +34,6 @@ function Routes() {
       .catch(setTablesError)
 
   }, [])
-
-
-
-
-  
 
   return (
     <Switch>
