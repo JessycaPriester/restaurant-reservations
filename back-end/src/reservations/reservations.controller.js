@@ -7,7 +7,7 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary")
  */
 async function list(request, response) {
   const date = request.query.date;
-  console.log(date)
+  console.log("MY DATE", typeof date)
   const phoneNumber = request.query.mobile_number;
   console.log(phoneNumber)
   let res

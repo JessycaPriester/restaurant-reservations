@@ -11,6 +11,7 @@ function create(newTable) {
         .insert(newTable)
 }
 
+// TRIGGERING
 function read(table_id) {
     return knex("tables")
         .select("*")

@@ -97,6 +97,7 @@ async function create(req, res, next) {
 
 // Check that the table exists
 function tableExists(req, res, next) {
+    console.log("RIGHT HERE", req.body.data)
     service
         .read(req.params.tableId)
         .then((table) => {
@@ -214,8 +215,8 @@ async function update(req, res, next) {
     };
 
     await reservationsService.update(req.body.data.reservation_id, "seated")
-    await service.update(updatedTable)
-    res.json({ data: await service.read(updatedTable.table_id)})
+    const results = await service.update(updatedTable)
+    res.json({ data: results})
 }
 
 function tableIsOccupied(req, res, next) {
