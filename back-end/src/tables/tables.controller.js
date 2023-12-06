@@ -244,9 +244,9 @@ async function deleteTableAssignment(req, res, next) {
 
 
 module.exports = {
-    listTables,
+    listTables: [asyncErrorBoundary(listTables)],
     create: [hasRequiredPropertiesCreate, hasValidTableName, hasValidCapacity, asyncErrorBoundary(create)],
-    update: [tableExists, hasRequiredPropertiesUpdate,reservationExists, hasSufficientCapacity, tableIsUnoccupied, reservationIsNotSeated, asyncErrorBoundary(update)],
+    update: [tableExists, hasRequiredPropertiesUpdate, asyncErrorBoundary(reservationExists), hasSufficientCapacity, tableIsUnoccupied, reservationIsNotSeated, asyncErrorBoundary(update)],
     read: [tableExists, asyncErrorBoundary(read)],
     delete: [tableExists, tableIsOccupied, asyncErrorBoundary(deleteTableAssignment)]
 }

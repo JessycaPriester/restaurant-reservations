@@ -84,21 +84,26 @@ function SeatTable() {
         }
 
         const abortController = new AbortController();
-        await updateTable(tableId, updatedTable, abortController.signal)
 
-        const newStatus = "seated"
-        
-        await updateReservationStatus(reservation.reservation_id, newStatus, abortController.signal)
-          .then(response => {
-            console.log('Reservation status updated successfully:', response);
-            setStatus(newStatus);
-          })
-          .catch(error => {
-            console.error('Error updating reservation status:', error.message);
-          });
+        try {
+            await updateTable(tableId, updatedTable, abortController.signal)
+
+            const newStatus = "seated"
+            
+            await updateReservationStatus(reservation.reservation_id, newStatus, abortController.signal)
+            .then(response => {
+                console.log('Reservation status updated successfully:', response);
+                setStatus(newStatus);
+            })
+            .catch(error => {
+                console.error('Error updating reservation status:', error.message);
+            });
 
 
-        history.push(`/dashboard?date=${reservation.reservation_date}`)
+            history.push(`/dashboard?date=${reservation.reservation_date}`)
+        } catch (error) {
+            console.error("Error handling seating reservation: ",)
+        }
 
         return () => abortController.abort();
     }

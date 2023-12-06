@@ -7,9 +7,14 @@ function ManageReservation({ handleCancelReservation, reservation_id, first_name
         if (window.confirm("Do you want to cancel this reservation? This cannot be undone.")) {
             const newStatus = "cancelled"
             const abortController = new AbortController();
-            await updateReservationStatus(reservation_id, newStatus, abortController.signal)
 
-            handleCancelReservation()
+            try {
+                await updateReservationStatus(reservation_id, newStatus, abortController.signal)
+
+                handleCancelReservation()
+            } catch (error) {
+                console.error("Error handling cancel reservation: ", error)
+            }
 
             return () => abortController.abort();
         }

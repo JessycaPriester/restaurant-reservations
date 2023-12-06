@@ -268,7 +268,7 @@ async function updateReservation(req, res, next) {
 
 
 module.exports = {
-  list,
+  list: [asyncErrorBoundary(list)],
   create: [hasRequiredProperties, hasValidProperties, hasValidDate, hasValidTime, reservationStatusIsBooked, asyncErrorBoundary(create)],
   read: [reservationExists, asyncErrorBoundary(read)],
   update: [reservationExists, reservationStatusIsValid, asyncErrorBoundary(update)],

@@ -17,8 +17,13 @@ function SearchReservation() {
         event.preventDefault()
         
         const abortController = new AbortController();
-        const reservationMatch = await searchReservation(phoneNumber, abortController.signal);
-        setReservations(reservationMatch)
+
+        try {
+            const reservationMatch = await searchReservation(phoneNumber, abortController.signal);
+            setReservations(reservationMatch)
+        } catch (error) {
+            console.error("Error handling reservation search: ", error)
+        }
 
         return () => abortController.abort()
 
@@ -28,8 +33,13 @@ function SearchReservation() {
 
     async function handleCancelReservation() {
         const abortController = new AbortController()
+
+        try {
         const updatedReservations = await searchReservation(phoneNumber, abortController.signal)
         setReservations(updatedReservations)
+        } catch (error) {
+            console.error("Error handling cancel reservation: ", error)
+        }
 
         return () => abortController.abort()
     }

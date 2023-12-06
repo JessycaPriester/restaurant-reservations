@@ -91,8 +91,12 @@ function CreateReservation() {
 
         const abortController = new AbortController();
 
-        const reservation = await createReservation({first_name, last_name, mobile_number, reservation_date, reservation_time, people}, abortController.signal)
-        history.push(`/dashboard?date=${reservation.reservation_date}`)
+        try {
+            const reservation = await createReservation({first_name, last_name, mobile_number, reservation_date, reservation_time, people}, abortController.signal)
+            history.push(`/dashboard?date=${reservation.reservation_date}`)
+        } catch (error) {
+            console.error("Error handing submit create reservation form: ", error)
+        }
 
         return () => abortController.abort();
     }

@@ -10,15 +10,19 @@ function ManageTable({ table, handleFinishTable }) {
 
   const finishHandler = async (table_id, reservation_id) => {
     const abortController = new AbortController()
-    
+
     if (window.confirm("Is this table ready to seat new guests? This cannot be undone.")) {
       const updatedStatus = "finished"
       // Updates the reservation status to finished and removes the table assignment
 
-      await deleteSeatAssignment(table_id, abortController.signal)
+      try {
+        await deleteSeatAssignment(table_id, abortController.signal)
 
-      // Rerenders the page
-      handleFinishTable(table_id)
+        // Rerenders the page
+        handleFinishTable(table_id)
+      } catch (error) {
+        console.error("Error handling finish table: ", error)
+      }
     }
     return() => abortController.abort()
   }

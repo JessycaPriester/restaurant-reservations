@@ -109,9 +109,6 @@ function EditReservation() {
         }
 
 
-        //const reservation = await createReservation({first_name, last_name, mobile_number, reservation_date, reservation_time, people})
-        //history.push(`/dashboard?date=${reservation.reservation_date}`)
-
         const updatedReservation = {
             first_name: first_name,
             last_name: last_name,
@@ -123,9 +120,13 @@ function EditReservation() {
         }
 
         const abortController = new AbortController();
-        
-        await updateReservation(reservation.reservation_id, updatedReservation, abortController.signal)
-        history.goBack()
+
+        try {        
+            await updateReservation(reservation.reservation_id, updatedReservation, abortController.signal)
+            history.goBack()
+        } catch (error) {
+            console.error("Error handling submit edit reservation form: ", error)
+        }
 
         return () => abortController.abort();
     }

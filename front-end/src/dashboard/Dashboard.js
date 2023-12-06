@@ -90,21 +90,31 @@ function Dashboard({ date }) {
   async function handleFinishTable(table_id) {
     const abortController = new AbortController();
     console.log(resDate)
-    const updatedReservations = await listReservations({date: resDate}, abortController.signal)
-    console.log(updatedReservations)
-    setReservations(updatedReservations)  
 
-    const updatedTables = await listTables(abortController.signal)
-    setTables(updatedTables)
+    try {
+      const updatedReservations = await listReservations({date: resDate}, abortController.signal)
+      console.log(updatedReservations)
+      setReservations(updatedReservations)  
+
+      const updatedTables = await listTables(abortController.signal)
+      setTables(updatedTables)
+    } catch (error) {
+      console.error("Error handling finished table: ", error)
+    }
 
     return () => abortController.abort()
   }
 
   async function handleCancelReservation() {
     const abortController = new AbortController();
-    const updatedReservations = await listReservations({date: resDate}, abortController.signal)
-    console.log(updatedReservations)
-    setReservations(updatedReservations)
+
+    try {
+      const updatedReservations = await listReservations({date: resDate}, abortController.signal)
+      console.log(updatedReservations)
+      setReservations(updatedReservations)
+    } catch (error) {
+      console.error("Error handling cancel reservation: ", error)
+    }
 
     return () => abortController.abort()
   }
@@ -138,7 +148,7 @@ function Dashboard({ date }) {
       <h3>Tables</h3>
         <ul style={{listStyle: "none"}}>
           {tables.map((table) => (
-            <ManageTable key={table.table_id} table={table} handleFinishTable={handleFinishTable} />
+            <ManageTable table={table} handleFinishTable={handleFinishTable} />
           ))}
         </ul>
     </main>
