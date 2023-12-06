@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import { useHistory, useParams  } from "react-router-dom";
 
-import { listReservations, readReservation, updateReservation } from "../utils/api";
+import { listReservations, readReservation, updateReservation, handleEditedReservation } from "../utils/api";
 import ReservationForm from "./ReservationForm";
 
 
@@ -34,6 +34,15 @@ function EditReservation() {
 
         return () => abortController.abort()
     }, [])
+
+    useEffect(() => {
+        setFirstName(reservation.first_name)
+        setLastName(reservation.last_name)
+        setMobileNumber(reservation.mobile_number)
+        setReservationDate(reservation.reservation_date)
+        setReservationTime(reservation.reservation_time)
+        setPeople(reservation.people)
+    }, [reservation])
 
     // Change handlers for input boxes
     const handleFirstNameChildStateChange = (childState) => {
@@ -123,7 +132,7 @@ function EditReservation() {
 
         try {        
             await updateReservation(reservation.reservation_id, updatedReservation, abortController.signal)
-            history.goBack()
+            history.push(`/dashboard?date=${updatedReservation.reservation_date}`);
         } catch (error) {
             console.error("Error handling submit edit reservation form: ", error)
         }
@@ -135,7 +144,7 @@ function EditReservation() {
         <div>
             <form onSubmit={submitHandler}>
                 <ReservationForm onFirstNameStateChange={handleFirstNameChildStateChange} onLastNameStateChange={handleLastNameChildStateChange} onMobileNumberStateChange={handleMobileNumberChildStateChange} onReservationDateChange={handleReservationDateChildStateChange} onReservationTimeChange={handleReservationTimeChildStateChange} onPeopleChange={handlePeopleChildStateChange} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people}/>
-                <button type="submit">Submit</button>
+                <button type="submit">submit</button>
                 <button type="button" onClick={cancelHandler}>Cancel</button>
             </form>
             {error && (

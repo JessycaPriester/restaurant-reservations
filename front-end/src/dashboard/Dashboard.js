@@ -124,8 +124,6 @@ function Dashboard({ date }) {
     console.log("Tables and/or reservations have been updated")
   }, [tables, reservations]);
 
-
-
   return (
     <main>
       <h1>Dashboard</h1>

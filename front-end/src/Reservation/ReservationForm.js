@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 function ReservationForm({onFirstNameStateChange, onLastNameStateChange, onMobileNumberStateChange, onReservationDateChange, onReservationTimeChange, onPeopleChange, first_name, last_name, mobile_number, reservation_date, reservation_time, people}) {
-    const [childStateFirstName, setChildStateFirstName] = useState("")
+    const [childStateFirstName, setChildStateFirstName] = useState(first_name)
     const [childStateLastName, setChildStateLastName] = useState("")
     const [childStateMobileNumber, setChildStateMobileNumber] = useState("")
     const [childStateReservationDate, setChildStateReservationDate] = useState("")
@@ -54,23 +54,23 @@ function ReservationForm({onFirstNameStateChange, onLastNameStateChange, onMobil
                 </label>
                 <label htmlFor="last_name">
                     Last Name
-                    <input required type="text" id="last_name" name="last_name" onChange={handleLastNameChange} />
+                    <input required type="text" id="last_name" name="last_name" value={last_name} onChange={handleLastNameChange} />
                 </label>
                 <label htmlFor="mobile_number">
                     Mobile Number
-                    <input required type="text" id="mobile_number" name="mobile_number" onChange={handleMobileNumberChange} />
+                    <input required type="text" id="mobile_number" name="mobile_number" value={mobile_number} onChange={handleMobileNumberChange} />
                 </label>
                 <label htmlFor="reservation_date">
                     Reservation Date
-                    <input required type="date" id="reservation_date" name="reservation_date" onChange={handleReservationDateChange} />
+                    <input required type="date" id="reservation_date" name="reservation_date" value={reservation_date} onChange={handleReservationDateChange} />
                 </label>
                 <label htmlFor="reservation_time">
                     Reservation Time
-                    <input required type="time" id="reservation_time" name="reservation_time" min="00:00" max="23:59" onChange={handleReservationTimeChange} />
+                    <input required type="time" id="reservation_time" name="reservation_time" value={reservation_time} min="00:00" max="23:59" onChange={handleReservationTimeChange} />
                 </label>
                 <label htmlFor="people">
                     Party Size
-                    <input required type="number" id="people" name="people" min="1" onChange={handlePartySizeChange} />
+                    <input required type="number" id="people" name="people" value={people} min="1" onChange={handlePartySizeChange} />
                 </label>
         </>
     )
