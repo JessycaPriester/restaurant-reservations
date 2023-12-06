@@ -79,14 +79,15 @@ function hasValidCapacity(req, res, next) {
 // Create the table
 async function create(req, res, next) {
     try {
-        const { data: {table_name, capacity} = {} } = req.body;
+        const { data: {table_name, capacity, reservation_id} = {} } = req.body;
         const newTable = {
             table_name: table_name,
-            capacity: capacity
+            capacity: capacity,
+            reservation_id: reservation_id
         };
 
-        await service.create(newTable);
-        res.status(201).json({ data: newTable });
+        const data = await service.create(newTable);
+        res.status(201).json({ data: data });
     } catch (error) {
         next(error)
     }

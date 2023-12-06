@@ -32,7 +32,7 @@ function search(mobile_number) {
 function create(newReservation) {
     return knex("reservations")
         .insert(newReservation)
-        .returning(["reservation_id", "status"])
+        .returning("*")
         .then((createdReservation) => createdReservation[0])
 }
 

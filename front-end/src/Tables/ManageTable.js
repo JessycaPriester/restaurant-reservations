@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 
 
 function ManageTable({ table, handleFinishTable }) {
-    const [status, setStatus] = useState(table.reservation_id ? 'Occupied' : 'Free');
+    const [status, setStatus] = useState(table.reservation_id ? 'occupied' : 'free');
 
     const history = useHistory()
 
@@ -27,15 +27,17 @@ function ManageTable({ table, handleFinishTable }) {
     <li key={table.table_id}>
       <strong>Table Name:</strong> {table.table_name}<br />
       <strong>Table Capacity</strong> {table.capacity}<br />
-      {table.reservation_id ? (
+      {status === "free" ? (
+        <div>
+          <p data-table-id-status={table.table_id}>{status}</p>
+        </div>
+      ) : (
         <div>
           <p data-table-id-status={table.table_id}>{status}</p>
           <button onClick={() => finishHandler(table.table_id, table.reservation_id)} data-table-id-finish={table.table_id}>
-            Finish
-          </button>
-        </div>
-      ) : (
-        <p data-table-id-status={table.table_id}>{status}</p>
+          Finish
+        </button>
+      </div>
       )}
     </li>
   );
