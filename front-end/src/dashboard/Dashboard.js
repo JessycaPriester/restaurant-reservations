@@ -42,9 +42,11 @@ function Dashboard({ date }) {
     const abortController = new AbortController();
     setReservationsError(null);
     
-    listReservations({ date: resDate }, abortController.signal)
+    if(resDate) {
+      listReservations({ date: resDate }, abortController.signal)
       .then(setReservations)
       .catch(setReservationsError);
+    }
 
     return () => abortController.abort();
   }, [resDate]);
@@ -61,6 +63,7 @@ function Dashboard({ date }) {
       .catch(setTablesError)
 
   }, [])
+
 
 
   // Handlers for buttons
@@ -85,16 +88,16 @@ function Dashboard({ date }) {
   // When the finish button is pressed set tables to the updated tables and set reservations to the updated reservations
   async function handleFinishTable(table_id) {
     console.log(resDate)
-    const updatedReservations = listReservations(resDate)
+    const updatedReservations = await listReservations({date: resDate})
     console.log(updatedReservations)
-    //setReservations(updatedReservations)  
+    setReservations(updatedReservations)  
 
     const updatedTables = await listTables()
     setTables(updatedTables)
   }
 
   async function handleCancelReservation() {
-    const updatedReservations = await listReservations(resDate)
+    const updatedReservations = await listReservations({date: resDate})
     console.log(updatedReservations)
     setReservations(updatedReservations)
   }

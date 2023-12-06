@@ -96,7 +96,7 @@ function SeatTable() {
           });
 
 
-        history.push('/dashboard')
+        history.push(`/dashboard?date=${reservation.reservation_date}`)
     }
 
 
