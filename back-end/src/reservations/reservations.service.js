@@ -32,6 +32,8 @@ function search(mobile_number) {
 function create(newReservation) {
     return knex("reservations")
         .insert(newReservation)
+        .returning(["reservation_id", "status"])
+        .then((createdReservation) => createdReservation[0])
 }
 
 function update(reservation_id, newStatus) {

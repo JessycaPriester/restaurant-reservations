@@ -117,18 +117,19 @@ function Dashboard({ date }) {
       </div>
       <ErrorAlert error={reservationsError} />
       <h3>Reservations</h3>
-      <ul>
-        {reservations.map(({ reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status}) => (
-          <ManageReservation handleCancelReservation={handleCancelReservation} reservation_id={reservation_id} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people} status={status}/>
-        ))}
-      </ul>
       <div>
         <button type="button" onClick={previousHandler}>Previous</button>
         <button type="button" onClick={todayHandler}>Today</button>
         <button type="button" onClick={nextHandler}>Next</button>
       </div>
+      <ul style={{ listStyle: "none"}}>
+        {reservations.map(({ reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status}) => (
+          <ManageReservation handleCancelReservation={handleCancelReservation} reservation_id={reservation_id} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people} status={status}/>
+        ))}
+      </ul>
+
       <h3>Tables</h3>
-        <ul>
+        <ul style={{listStyle: "none"}}>
           {tables.map((table) => (
             <ManageTable key={table.table_id} table={table} handleFinishTable={handleFinishTable} />
           ))}

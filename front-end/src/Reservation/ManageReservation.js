@@ -3,10 +3,10 @@ import React, { useState } from "react";
 import { updateReservationStatus } from "../utils/api";
 
 function ManageReservation({ handleCancelReservation, reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status }) {
-    function cancelHandler() {
+    async function cancelHandler() {
         if (window.confirm("Do you want to cancel this reservation? This cannot be undone.")) {
             const newStatus = "cancelled"
-            updateReservationStatus(reservation_id, newStatus)
+            await updateReservationStatus(reservation_id, newStatus)
 
             handleCancelReservation()
         }

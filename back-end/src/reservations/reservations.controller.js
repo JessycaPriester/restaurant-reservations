@@ -208,8 +208,8 @@ async function create(req, res, next) {
       people: people
     };
 
-    await service.create(newReservation);
-    res.status(201).json({ data: newReservation });
+    const data = await service.create(newReservation);
+    res.status(201).json({ data: data });
   } catch (error) {
     next(error);
   }
