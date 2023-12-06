@@ -27,8 +27,12 @@ function EditReservation() {
     console.log(reservation)
 
     useEffect(() => {
-        readReservation(reservation_id)
+        const abortController = new AbortController();
+
+        readReservation(reservation_id, abortController.signal)
             .then(setReservation)
+
+        return () => abortController.abort()
     }, [])
 
     // Change handlers for input boxes
@@ -53,7 +57,7 @@ function EditReservation() {
     }
 
     const handlePeopleChildStateChange = (childState) => {
-        setPeople(childState);
+        setPeople(Number(childState));
     }
 
     // Handlers for buttons
@@ -117,9 +121,13 @@ function EditReservation() {
             people: people,
             status: reservation.status
         }
+
+        const abortController = new AbortController();
         
-        updateReservation(reservation.reservation_id, updatedReservation)
+        await updateReservation(reservation.reservation_id, updatedReservation, abortController.signal)
         history.goBack()
+
+        return () => abortController.abort();
     }
 
     return (

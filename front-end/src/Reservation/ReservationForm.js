@@ -6,7 +6,7 @@ function ReservationForm({onFirstNameStateChange, onLastNameStateChange, onMobil
     const [childStateMobileNumber, setChildStateMobileNumber] = useState("")
     const [childStateReservationDate, setChildStateReservationDate] = useState("")
     const [childStateReservationTime, setChildStateReservationTime] = useState("")
-    const [childStatePeople, setChildStatePeople] = useState("")
+    const [childStatePeople, setChildStatePeople] = useState(1)
 
     const handleFirstNameChange = (event) => {
         const newValue = event.target.value

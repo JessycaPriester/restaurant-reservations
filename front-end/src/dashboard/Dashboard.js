@@ -62,6 +62,7 @@ function Dashboard({ date }) {
       .then(setTables)
       .catch(setTablesError)
 
+    return () => abortController.abort()
   }, [])
 
 
@@ -87,22 +88,28 @@ function Dashboard({ date }) {
 
   // When the finish button is pressed set tables to the updated tables and set reservations to the updated reservations
   async function handleFinishTable(table_id) {
+    const abortController = new AbortController();
     console.log(resDate)
-    const updatedReservations = await listReservations({date: resDate})
+    const updatedReservations = await listReservations({date: resDate}, abortController.signal)
     console.log(updatedReservations)
     setReservations(updatedReservations)  
 
-    const updatedTables = await listTables()
+    const updatedTables = await listTables(abortController.signal)
     setTables(updatedTables)
+
+    return () => abortController.abort()
   }
 
   async function handleCancelReservation() {
-    const updatedReservations = await listReservations({date: resDate})
+    const abortController = new AbortController();
+    const updatedReservations = await listReservations({date: resDate}, abortController.signal)
     console.log(updatedReservations)
     setReservations(updatedReservations)
+
+    return () => abortController.abort()
   }
 
-  // If tables every changes, rerender the page
+  // If tables ever changes, rerender the page
   useEffect(() => {
     console.log("Tables and/or reservations have been updated")
   }, [tables, reservations]);

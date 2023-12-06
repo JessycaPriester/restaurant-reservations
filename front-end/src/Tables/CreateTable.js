@@ -40,10 +40,13 @@ function CreateTable({setTables}) {
             return;
         }
 
-        const table = await createTable({table_name, capacity})
+        const abortController = new AbortController();
+        const table = await createTable({table_name, capacity}, abortController.signal)
         setTables((prevTables) => [...prevTables, table]);
         console.log("Submitted");
         history.push(`/dashboard`)
+
+        return () => abortController.abort()
     }
 
     return (

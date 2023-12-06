@@ -89,9 +89,12 @@ function CreateReservation() {
             setError("Reservation time is outside hours of operation.")
         }
 
+        const abortController = new AbortController();
 
-        const reservation = await createReservation({first_name, last_name, mobile_number, reservation_date, reservation_time, people})
+        const reservation = await createReservation({first_name, last_name, mobile_number, reservation_date, reservation_time, people}, abortController.signal)
         history.push(`/dashboard?date=${reservation.reservation_date}`)
+
+        return () => abortController.abort();
     }
 
     return (

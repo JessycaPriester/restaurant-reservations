@@ -16,16 +16,22 @@ function SearchReservation() {
     const submitHandler = async(event) => {
         event.preventDefault()
         
-        const reservationMatch = await searchReservation(phoneNumber);
+        const abortController = new AbortController();
+        const reservationMatch = await searchReservation(phoneNumber, abortController.signal);
         setReservations(reservationMatch)
+
+        return () => abortController.abort()
 
                 console.log(reservations)
 
     }
 
     async function handleCancelReservation() {
-        const updatedReservations = await searchReservation(phoneNumber)
+        const abortController = new AbortController()
+        const updatedReservations = await searchReservation(phoneNumber, abortController.signal)
         setReservations(updatedReservations)
+
+        return () => abortController.abort()
     }
 
     useEffect(() => {

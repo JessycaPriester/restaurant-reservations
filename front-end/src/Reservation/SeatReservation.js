@@ -23,6 +23,7 @@ function SeatTable() {
             .then(setTables)
             .catch(setTablesError)
 
+        return () => abortController.abort();
     }, [])
 
     // When tableId changes find the matching table in tables and set table to this table
@@ -82,11 +83,12 @@ function SeatTable() {
             }
         }
 
-        await updateTable(tableId, updatedTable)
+        const abortController = new AbortController();
+        await updateTable(tableId, updatedTable, abortController.signal)
 
         const newStatus = "seated"
         
-        await updateReservationStatus(reservation.reservation_id, newStatus)
+        await updateReservationStatus(reservation.reservation_id, newStatus, abortController.signal)
           .then(response => {
             console.log('Reservation status updated successfully:', response);
             setStatus(newStatus);
@@ -97,6 +99,8 @@ function SeatTable() {
 
 
         history.push(`/dashboard?date=${reservation.reservation_date}`)
+
+        return () => abortController.abort();
     }
 
 

@@ -68,18 +68,18 @@ export async function listReservations(params, signal) {
     .then(formatReservationTime)
 }
 
-export async function readReservation(reservation_id) {
+export async function readReservation(reservation_id, signal) {
   const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
 
-    return await fetchJson(url, { headers }, [])
+    return await fetchJson(url, { headers,signal }, [])
     .then(formatReservationDate)
     .then(formatReservationTime)
 }
 
-export async function searchReservation(phoneNumber) {
+export async function searchReservation(phoneNumber,signal) {
   const url = new URL(`${API_BASE_URL}/reservations?mobile_number=${phoneNumber}`);
 
-  return await fetchJson(url, { headers }, [])
+  return await fetchJson(url, { headers, signal }, [])
     .then(formatReservationDate)
     .then(formatReservationTime)
 }
@@ -108,7 +108,7 @@ export async function createReservation(reservation, signal) {
 }
 
 
-export async function listTables(params, signal) {
+export async function listTables(signal) {
   const url = new URL(`${API_BASE_URL}/tables`);
   
   return await fetchJson(url, { headers, signal}, [])
@@ -121,6 +121,7 @@ export async function updateTable(tableId, updatedTable, signal) {
     method: "PUT",
     headers,
     body: JSON.stringify(updatedTable),
+    signal
   }
   return await fetchJson(url, options, updatedTable)
 }
@@ -129,7 +130,8 @@ export async function deleteSeatAssignment(table_id, signal) {
   const url = new URL(`${API_BASE_URL}/tables/${table_id}/seat`);
 
   const options = {
-    method: "DELETE"
+    method: "DELETE",
+    signal
   }
 
   return await fetchJson(url, options);
@@ -146,12 +148,13 @@ export async function updateReservationStatus(reservation_id, newStatus, signal)
       data: {
         status: newStatus,
       },
-    })
+    }),
+    signal
   }
   return await fetchJson(url, options, newStatus)
 }
 
-export async function updateReservation(reservation_id, updatedReservation) {
+export async function updateReservation(reservation_id, updatedReservation, signal) {
   const url = new URL(`${API_BASE_URL}/reservations/${reservation_id}`);
 
   const options = {
@@ -159,7 +162,8 @@ export async function updateReservation(reservation_id, updatedReservation) {
     headers,
     body: JSON.stringify({
       data: updatedReservation
-    })
+    }),
+    signal
   }
 
   return await fetchJson(url, options, updatedReservation)
