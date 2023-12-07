@@ -64,7 +64,7 @@ Since tests take time to run, you might want to consider running only the tests 
 ![Dashboard](image.png)
 
 
-### US-01 Create and list reservations
+### Create and list reservations
 
 As a restaurant manager<br/>
 I want to create a new reservation when a customer calls<br/>
@@ -84,7 +84,7 @@ so that I know how many customers will arrive at the restaurant on a given day.
  The `/dashboard` page lists all reservations for one date only. (E.g. if the URL is `/dashboard?date=2035-12-30` it will list the reservations for that date). The reservations are sorted by time.
    - The next, previous, and today buttons allow the user to see reservations on other dates
 
-### US-04 Seat reservation
+### Seat reservation
 
 As a restaurant manager, <br/>
 When a customer with an existing reservation arrives at the restaurant<br/>
@@ -108,7 +108,7 @@ The `/reservations/:reservation_id/seat` has a form with the following required 
      
   When this form is submitted the reservation is assigned to the table, and then displays the `/dashboard` page
 
-### US-05 Finish an occupied table
+### Finish an occupied table
 
 As a restaurant manager<br/>
 I want to free up an occupied table when the guests leave<br/>
@@ -116,7 +116,7 @@ so that I can seat new guests at that table.<br/>
 
 The `/dashboard` page will displays a "Finish" button on each _occupied_ table. Clicking the "Finish" button will display the following confirmation: "Is this table ready to seat new guests? This cannot be undone." If the user selects "Ok" the system will remove the reservation from the table assignment.
 
-### US-06 Reservation Status
+### Reservation Status
 
 As a restaurant manager<br/>
 I want a reservation to have a status of either booked, seated, or finished<br/>
@@ -126,7 +126,7 @@ so that I can see which reservation parties are seated, and finished reservation
 The `/dashboard` page will display the status of the reservation. The default status is "booked". A seat button will be visible when the reservation status is "booked". Clicking the Seat button changes the status to "seated". Clicking the Finish button associated with the table changes the reservation status to "finished" and removes the reservation from the dashboard.
 
 
-### US-07 Search for a reservation by phone number
+### Search for a reservation by phone number
 
 As a restaurant manager<br/>
 I want to search for a reservation by phone number (partial or complete)<br/>
@@ -135,7 +135,7 @@ so that I can quickly access a customer's reservation when they call about their
 
 The `/search` page displays a search box. Clicking on the "Find" button will look through the reservation(s) in the database and display all matched records on the `/search` page. The search page will display all reservations matching the phone number, regardless of status.
 
-### US-08 Change an existing reservation
+### Change an existing reservation
 
 As a restaurant manager<br/>
 I want to be able to modify a reservation if a customer calls to change or cancel their reservation<br/>
