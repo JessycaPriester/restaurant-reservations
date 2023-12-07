@@ -153,7 +153,7 @@ function Dashboard({ date }) {
         </thead>
         <tbody>
           {reservations.map(({ reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status}) => (
-            <ManageReservation handleCancelReservation={handleCancelReservation} reservation_id={reservation_id} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people} status={status}/>
+            <ManageReservation key={reservation_id} handleCancelReservation={handleCancelReservation} reservation_id={reservation_id} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people} status={status}/>
           ))}
         </tbody>
       </table>
@@ -161,16 +161,18 @@ function Dashboard({ date }) {
       <h3>Tables</h3>
       <table className="table table-striped">
         <thead>
-          <th scope="col">Name</th>
-          <th scope="col">Capacity</th>
-          <th scope="col">Status</th>
-          <th scope="col"></th>
-          <th scope="col"></th>
-          <th scope="col"></th>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Capacity</th>
+            <th scope="col">Status</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+          </tr>
         </thead>
         <tbody>
           {tables.map((table) => (
-              <ManageTable table={table} handleFinishTable={handleFinishTable} />
+              <ManageTable key={table.table_id} table={table} handleFinishTable={handleFinishTable} />
             ))}
         </tbody>
       </table>
