@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { updateReservationStatus } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
 function ManageReservation({ handleCancelReservation, reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status }) {
     const [error, setError] = useState(null)
+
+    useEffect(() => {
+        setError(null)
+    }, []) 
 
     async function cancelHandler() {
         if (window.confirm("Do you want to cancel this reservation? This cannot be undone.")) {
@@ -24,6 +28,11 @@ function ManageReservation({ handleCancelReservation, reservation_id, first_name
     }
 
     
+    if (error) {
+        return (
+            <ErrorAlert error={error} />
+        )
+    }
 
     if (status !== "cancelled") {
         return (

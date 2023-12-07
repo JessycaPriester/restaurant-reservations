@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import { useHistory, useParams  } from "react-router-dom";
 
-import { listReservations, readReservation, updateReservation, handleEditedReservation } from "../utils/api";
+import { readReservation, updateReservation, handleEditedReservation } from "../utils/api";
 import ReservationForm from "./ReservationForm";
 import ErrorAlert from "../layout/ErrorAlert";
 
@@ -25,10 +25,10 @@ function EditReservation() {
     // Find the reservation with the id in the params
     const params = useParams()
     const reservation_id = Number(params.reservation_id)
-    console.log(reservation)
 
     useEffect(() => {
         const abortController = new AbortController();
+        setError(null)
 
         readReservation(reservation_id, abortController.signal)
             .then(setReservation)

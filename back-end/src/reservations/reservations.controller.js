@@ -1,5 +1,3 @@
-const knex = require("../db/connection")
-const reservations = require('../db/seeds/00-reservations.json')
 const service = require("./reservations.service")
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary")
 /**
@@ -7,9 +5,7 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary")
  */
 async function list(request, response) {
   const date = request.query.date;
-  console.log("MY DATE", typeof date)
   const phoneNumber = request.query.mobile_number;
-  console.log(phoneNumber)
   let res
 
   if (date) {
@@ -27,7 +23,6 @@ async function list(request, response) {
 }
 
 function reservationExists(req, res, next) {
-  console.log(req.params.reservationId)
   service
       .read(req.params.reservationId)
       .then((reservation) => {
@@ -83,8 +78,6 @@ function hasValidProperties(req, res, next) {
   const { reservation_date, reservation_time, people} = req.body.data;
   const isNumber = Number.isInteger(people);
   const day = `${reservation_date}  ${reservation_time}`;
-  const today = new Date();
-  const date = new Date(day);
   const timeFormat = /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
   const dateFormat = /^\d{4}\-\d{1,2}\-\d{1,2}$/;
 
@@ -115,6 +108,7 @@ function hasValidProperties(req, res, next) {
 function hasValidDate(req,res, next) {
   const {reservation_date} = req.body.data;
   const {reservation_time} = req.body.data;
+  const day = `${reservation_date} ${reservation_time}`
 
   // Check if reservation date is on a day restaurant is closed 
   const dateParts = reservation_date.split('-');
@@ -137,8 +131,7 @@ function hasValidDate(req,res, next) {
   const currentMinutes =  currentDate.getMinutes().toString().padStart(2, '0');
   const currentTime = `${currentHours}:${currentMinutes}`;
 
-  console.log(currentDateDate)
-  console.log(reservationDateDate)
+
 
 
   if (reservationDateDate === currentDateDate) {
@@ -151,10 +144,8 @@ function hasValidDate(req,res, next) {
   }
 
 
-  const resDate = new Date(reservationDate)
+  const resDate = new Date(day)
 
-  console.log(currentDate)
-  console.log(resDate)
   if (resDate < currentDate) {
     return next({
       status: 400,
@@ -218,8 +209,7 @@ async function create(req, res, next) {
 function reservationStatusIsValid(req, res, next) {
   const reservation = res.locals.reservation
   const requestStatus = req.body.data.status
-  //console.log(req.body.data.status)
-  console.log(requestStatus)
+
 
   if (reservation.status === "finished") {
     return next({
@@ -255,7 +245,6 @@ async function update(req, res, next) {
 async function updateReservation(req, res, next) {
   const reservation = res.locals.reservation
 
-  console.log(req.body)
 
   updatedReservation = {
     ...req.body.data,

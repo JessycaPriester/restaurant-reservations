@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useHistory, useLocation, Link } from "react-router-dom";
-import { deleteSeatAssignment, listReservations, listTables } from "../utils/api";
+import { useHistory, useLocation } from "react-router-dom";
+import { listReservations, listTables } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
 
 import { previous,today, next } from "../utils/date-time";
@@ -87,13 +87,11 @@ function Dashboard({ date }) {
   }
 
   // When the finish button is pressed set tables to the updated tables and set reservations to the updated reservations
-  async function handleFinishTable(table_id) {
+  async function handleFinishTable() {
     const abortController = new AbortController();
-    console.log(resDate)
 
     try {
       const updatedReservations = await listReservations({date: resDate}, abortController.signal)
-      console.log(updatedReservations)
       setReservations(updatedReservations)  
 
       const updatedTables = await listTables(abortController.signal)
@@ -110,7 +108,6 @@ function Dashboard({ date }) {
 
     try {
       const updatedReservations = await listReservations({date: resDate}, abortController.signal)
-      console.log(updatedReservations)
       setReservations(updatedReservations)
     } catch (error) {
       setReservationsError(error)
@@ -131,7 +128,7 @@ function Dashboard({ date }) {
         <h4 className="mb-0">Reservations for date</h4>
       </div>
       <ErrorAlert error={reservationsError} />
-      <ErrorAlert error={reservationsError} />
+      <ErrorAlert error={tablesError} />
       <h3>Reservations</h3>
       <div>
         <button type="button" onClick={previousHandler}>Previous</button>

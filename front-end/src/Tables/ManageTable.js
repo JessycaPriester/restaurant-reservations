@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { deleteSeatAssignment, listTables, updateReservationStatus } from "../utils/api";
-import { useHistory } from 'react-router-dom';
+import { deleteSeatAssignment } from "../utils/api";
 import ErrorAlert from '../layout/ErrorAlert';
+
 function ManageTable({ table, handleFinishTable }) {
     const [status, setStatus] = useState(table.reservation_id ? 'occupied' : 'free');
     const [error, setError] = useState(null)
 
-    const history = useHistory()
 
-  const finishHandler = async (table_id, reservation_id) => {
+  const finishHandler = async (table_id) => {
     const abortController = new AbortController()
 
     if (window.confirm("Is this table ready to seat new guests? This cannot be undone.")) {

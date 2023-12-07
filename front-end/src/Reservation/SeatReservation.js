@@ -12,7 +12,6 @@ function SeatTable() {
     const [tables, setTables] = useState([])
     const [tablesError, setTablesError] = useState(null)
 
-    console.log(status)
 
     // When the page is first rendered get the tables and set the tables state to these tables
     useEffect(() => {
@@ -53,13 +52,11 @@ function SeatTable() {
           })
           .catch(setReservationsError);
 
-          console.log(reservation)
     
         return () => abortController.abort();
       }, [params.reservation_id]);
 
     const handleTableChange = (event) => {
-        console.log(event.target.value)
         setTableId(event.target.value)
     }
 

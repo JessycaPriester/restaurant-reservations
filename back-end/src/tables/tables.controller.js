@@ -1,8 +1,6 @@
 const service = require("./tables.service");
 const reservationsService = require("../reservations/reservations.service");
-const { table } = require("../db/connection");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
-//const hasProperties = require("../errors/hasProperties");
 
 // List all the tables
 async function listTables(req, res) {
@@ -98,7 +96,6 @@ async function create(req, res, next) {
 
 // Check that the table exists
 function tableExists(req, res, next) {
-    console.log("RIGHT HERE", req.body.data)
     service
         .read(req.params.tableId)
         .then((table) => {
@@ -188,8 +185,7 @@ function tableIsUnoccupied(req, res, next) {
 // Check that the reservation is not already seated 
 function reservationIsNotSeated(req, res, next) {
     const reservation = res.locals.reservation
-    console.log(reservation.status)
-    console.log("HERE")
+
     if (reservation.status === "seated") {
         next({
             status: 400, 

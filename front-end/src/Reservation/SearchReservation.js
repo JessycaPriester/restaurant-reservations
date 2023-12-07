@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { listReservations, searchReservation } from "../utils/api"
+import { searchReservation } from "../utils/api"
 import ManageReservation from "./ManageReservation";
 import ErrorAlert from "../layout/ErrorAlert";
 
@@ -7,6 +7,10 @@ function SearchReservation() {
     const [phoneNumber, setPhoneNumber] = useState('')
     const [reservations, setReservations] = useState([])
     const [error, setError] = useState(null)
+
+    useEffect(() => {
+        setError(null);
+    })
 
     const phoneNumberChangeHandler = (event) => {
         const number = event.target.value
@@ -28,9 +32,6 @@ function SearchReservation() {
         }
 
         return () => abortController.abort()
-
-                console.log(reservations)
-
     }
 
     async function handleCancelReservation() {

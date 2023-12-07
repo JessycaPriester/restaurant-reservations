@@ -1,7 +1,6 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useHistory} from "react-router-dom";
 import { createReservation } from "../utils/api";
-import Dashboard from "../dashboard/Dashboard";
 import ReservationForm from "./ReservationForm";
 import ErrorAlert from "../layout/ErrorAlert";
 
@@ -15,6 +14,10 @@ function CreateReservation() {
     const [ reservation_time, setReservationTime ] = useState("");
     const [ people, setPeople ] = useState(1)
     const [error, setError] = useState(null)
+
+    useEffect(() => {
+        setError(null)
+    },[])
 
     // Change handlers for input boxes
     const handleFirstNameChildStateChange = (childState) => {
