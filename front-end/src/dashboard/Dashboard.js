@@ -126,7 +126,7 @@ function Dashboard({ date }) {
 
   return (
     <main>
-      <h1>Dashboard</h1>
+      <h1>Dashboards</h1>
       <div className="d-md-flex mb-3">
         <h4 className="mb-0">Reservations for date</h4>
       </div>
@@ -137,20 +137,46 @@ function Dashboard({ date }) {
         <button type="button" onClick={todayHandler}>Today</button>
         <button type="button" onClick={nextHandler}>Next</button>
       </div>
-      <ul style={{ listStyle: "none"}}>
-        {reservations.map(({ reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status}) => (
-          <ManageReservation handleCancelReservation={handleCancelReservation} reservation_id={reservation_id} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people} status={status}/>
-        ))}
-      </ul>
+      <table className="table table-striped">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Phone</th>
+            <th scope="col">Reservation Date</th>
+            <th scope="col">Reservation Time</th>
+            <th scope="col">Party</th>
+            <th scope="col">Status</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {reservations.map(({ reservation_id, first_name, last_name, mobile_number, reservation_date, reservation_time, people, status}) => (
+            <ManageReservation handleCancelReservation={handleCancelReservation} reservation_id={reservation_id} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people} status={status}/>
+          ))}
+        </tbody>
+      </table>
 
       <h3>Tables</h3>
-        <ul style={{listStyle: "none"}}>
+      <table className="table table-striped">
+        <thead>
+          <th scope="col">Name</th>
+          <th scope="col">Capacity</th>
+          <th scope="col">Status</th>
+          <th scope="col"></th>
+          <th scope="col"></th>
+          <th scope="col"></th>
+        </thead>
+        <tbody>
           {tables.map((table) => (
-            <ManageTable table={table} handleFinishTable={handleFinishTable} />
-          ))}
-        </ul>
+              <ManageTable table={table} handleFinishTable={handleFinishTable} />
+            ))}
+        </tbody>
+      </table>
     </main>
-  );
+
+  )
 }
 
 export default Dashboard;

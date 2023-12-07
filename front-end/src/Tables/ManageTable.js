@@ -32,24 +32,27 @@ function ManageTable({ table, handleFinishTable }) {
   }, [table.reservation_id]);
 
   if (status === "occupied" || table.reservation_id) {
-    return (
-      <li key={table.table_id}>
-        <strong>Table Name:</strong> {table.table_name}<br />
-        <strong>Table Capacity</strong> {table.capacity}<br />
-        <p data-table-id-status={table.table_id}>{status}</p>
-        <button onClick={() => finishHandler(table.table_id, table.reservation_id)} data-table-id-finish={table.table_id}>
-          Finish
-        </button>
-      </li>
-    );
+    return(
+      <tr key={table.table_id}>
+        <td>{table.table_name}</td>
+        <td>{table.capacity}</td>
+        <td data-table-id-status={table.table_id}>{status}</td>
+        <td>
+          <button onClick={() => finishHandler(table.table_id, table.reservation_id)} data-table-id-finish={table.table_id}>
+            Finish
+          </button>
+          </td>
+      </tr>
+    )
   } else {
-    return (
-      <li key={table.table_id}>
-        <strong>Table Name:</strong> {table.table_name}<br />
-        <strong>Table Capacity</strong> {table.capacity}<br />
-        <p data-table-id-status={table.table_id}>{status}</p>
-      </li>
-    );
+    return(
+      <tr key={table.table_id}>
+        <td>{table.table_name}</td>
+        <td>{table.capacity}</td>
+        <td data-table-id-status={table.table_id}>{status}</td>
+        <td></td>
+      </tr>
+    )
   }
   
 }
