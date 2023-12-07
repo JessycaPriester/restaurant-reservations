@@ -19,7 +19,9 @@ function CreateReservation() {
 
  
     const history = useHistory();
-  // Handlers 
+  
+  
+  // INPUT CHANGE HANDLERS
 
   const textChangeHandler = (event) => {
     setFormData((currentFormData) => ({
@@ -28,13 +30,17 @@ function CreateReservation() {
     }))
 }
 
-const numberChangeHandler = (event) => {
-    setFormData((currentFormData) => ({
-        ...currentFormData,
-        [event.target.name]: Number(event.target.value),
-    }))
-}
+  const numberChangeHandler = (event) => {
+      setFormData((currentFormData) => ({
+          ...currentFormData,
+          [event.target.name]: Number(event.target.value),
+      }))
+  }
 
+
+  // BUTTON HANDLERS
+  
+  // Creates new reservation when submitted
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError(null)

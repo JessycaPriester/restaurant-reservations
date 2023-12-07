@@ -6,7 +6,13 @@ function ManageTable({ table, handleFinishTable }) {
     const [status, setStatus] = useState(table.reservation_id ? 'occupied' : 'free');
     const [error, setError] = useState(null)
 
+    useEffect(() => {
+      setStatus(table.reservation_id ? 'Occupied' : 'Free');
+    }, [table.reservation_id]);
 
+  // BUTTON HANDLERS
+  
+  // Sets tables status to finished and removes table assignment
   const finishHandler = async (table_id) => {
     const abortController = new AbortController()
 
@@ -19,15 +25,12 @@ function ManageTable({ table, handleFinishTable }) {
         // Rerenders the page
         handleFinishTable(table_id)
       } catch (error) {
-        setError(error.message)
+        setError(error)
       }
     }
     return() => abortController.abort()
   }
 
-  useEffect(() => {
-    setStatus(table.reservation_id ? 'Occupied' : 'Free');
-  }, [table.reservation_id]);
 
   if(error) {
     return (

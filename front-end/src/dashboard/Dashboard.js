@@ -23,6 +23,7 @@ function Dashboard({ date }) {
 
   const location = useLocation();
 
+  // Date from URL
   const queryDate = new URLSearchParams(location.search).get('date');
 
   // Display the Reservations and the tables
@@ -35,7 +36,6 @@ function Dashboard({ date }) {
       setResDate(date);
     }
   }, [queryDate, date]);
-
 
   // Every time the resDate changes get the reservations for this date and then set reservations to these reservations
   useEffect(() => {
@@ -50,6 +50,11 @@ function Dashboard({ date }) {
 
     return () => abortController.abort();
   }, [resDate]);
+
+    // If tables ever changes, rerender the page
+    useEffect(() => {
+      console.log("Tables and/or reservations have been updated")
+    }, [tables, reservations]);
 
 
 
@@ -115,11 +120,6 @@ function Dashboard({ date }) {
 
     return () => abortController.abort()
   }
-
-  // If tables ever changes, rerender the page
-  useEffect(() => {
-    console.log("Tables and/or reservations have been updated")
-  }, [tables, reservations]);
 
   return (
     <main>

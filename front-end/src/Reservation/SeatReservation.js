@@ -54,16 +54,23 @@ function SeatTable() {
         return () => abortController.abort();
       }, [params.reservation_id]);
 
+
+    // INPUT CHANGE HANDLERS
+
     const handleTableChange = (event) => {
         setTableId(event.target.value)
     }
 
     const history = useHistory()
 
+    // BUTTON HANDLERS
+
+
     function cancelHandler(){
         history.goBack();
     }
 
+    // Updates the tables reservation id so it's occupied then returns to that reservations dashboard
     const submitHandler = async(event) => {
         event.preventDefault();
 
@@ -86,13 +93,13 @@ function SeatTable() {
                 console.log('Reservation status updated successfully:', response);
             })
             .catch(error => {
-                setReservationsError(error.message)
+                setReservationsError(error)
             });
 
 
             history.push(`/dashboard?date=${reservation.reservation_date}`)
         } catch (error) {
-            setTablesError(error.message)
+            setTablesError(error)
         }
 
         return () => abortController.abort();

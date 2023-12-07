@@ -10,22 +10,25 @@ function CreateTable({setTables}) {
     const [ capacity, setCapacity ] = useState(1);
     const [error, setError] = useState(null)
 
-    // Change handlers for input boxes
+    // INPUT CHANGE HANDLERS
+
     const handleTableNameChange = (event) => setTableName(event.target.value);
     const handleCapacityChange = (event) => setCapacity(Number(event.target.value))
 
-    // Handlers for buttons
+    // BUTTON HANDLERS
+
     function cancelHandler() {
         history.goBack()
     }
 
+    // Creates table when submitted
     const submitHandler = async(event) => {
         event.preventDefault();
 
         const abortController = new AbortController();
 
         try {
-        const table = await createTable({table_name, capacity}, abortController.signal)
+        await createTable({table_name, capacity}, abortController.signal)
         history.push(`/dashboard`)
         } catch (error) {
             setError(error)

@@ -25,15 +25,10 @@ function EditReservation() {
     const history = useHistory();
 
 
-
-
-
-
-
     // Get the reservation with the matching id from params
     useEffect(() => {
         const abortController = new AbortController();
-        setError(null)
+        setReservationError(null)
 
         readReservation(reservation_id, abortController.signal)
             .then((reservation) => {
@@ -52,7 +47,7 @@ function EditReservation() {
     }, [reservation_id])
 
 
-    // Handlers
+    // INPUT CHANGE HANDLERS
 
     const textChangeHandler = (event) => {
         setFormData((currentFormData) => ({
@@ -68,7 +63,10 @@ function EditReservation() {
         }))
     }
 
+    
+    // BUTTON HANDLERS
 
+    // Updates the reservation when submitted
     const handleSubmit = async (event) => {
         event.preventDefault();
         setError(null);

@@ -4,6 +4,8 @@ import { useHistory } from "react-router-dom";
 function ReservationForm({ formData, textChangeHandler, numberChangeHandler, handleSubmit }) {
   const history = useHistory();
 
+  // BUTTON HANDLERS
+
     function cancelHandler() {
         history.goBack()
     }
