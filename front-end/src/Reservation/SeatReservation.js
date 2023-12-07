@@ -8,7 +8,6 @@ function SeatTable() {
     const [reservation, setReservation] = useState(null);
     const [tableId, setTableId] = useState(null);
     const [table, setTable] = useState({})
-    const [status, setStatus] = useState(null)
     const [tables, setTables] = useState([])
     const [tablesError, setTablesError] = useState(null)
 
@@ -29,7 +28,7 @@ function SeatTable() {
     useEffect(() => {
         const tableMatch = tables.find((table) => Number(table.table_id) === Number(tableId))
         setTable(tableMatch)
-    }, [tableId])
+    }, [tableId, tables])
 
     const params = useParams()
 
@@ -48,7 +47,6 @@ function SeatTable() {
                 return reservation.reservation_id === +params.reservation_id
             })            
             setReservation(reservationMatch)
-            setStatus(reservation.status)
           })
           .catch(setReservationsError);
 
@@ -86,7 +84,6 @@ function SeatTable() {
             await updateReservationStatus(reservation.reservation_id, newStatus, abortController.signal)
             .then(response => {
                 console.log('Reservation status updated successfully:', response);
-                setStatus(newStatus);
             })
             .catch(error => {
                 setReservationsError(error.message)

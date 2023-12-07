@@ -11,7 +11,6 @@ function ManageTable({ table, handleFinishTable }) {
     const abortController = new AbortController()
 
     if (window.confirm("Is this table ready to seat new guests? This cannot be undone.")) {
-      const updatedStatus = "finished"
       // Updates the reservation status to finished and removes the table assignment
 
       try {
@@ -38,7 +37,6 @@ function ManageTable({ table, handleFinishTable }) {
 
   if (status === "occupied" || table.reservation_id) {
     return(
-      <div>
         <tr key={table.table_id}>
           <td>{table.table_name}</td>
           <td>{table.capacity}</td>
@@ -49,19 +47,15 @@ function ManageTable({ table, handleFinishTable }) {
             </button>
             </td>
         </tr>
-        
-      </div>
     )
   } else {
     return(
-      <div>
         <tr key={table.table_id}>
           <td>{table.table_name}</td>
           <td>{table.capacity}</td>
           <td data-table-id-status={table.table_id}>{status}</td>
           <td></td>
         </tr>
-      </div>
     )
   }
   

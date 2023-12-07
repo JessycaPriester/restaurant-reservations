@@ -10,7 +10,6 @@ function CreateTable({setTables}) {
     const [ capacity, setCapacity ] = useState(1);
     const [error, setError] = useState(null)
 
-
     // Change handlers for input boxes
     const handleTableNameChange = (event) => setTableName(event.target.value);
     const handleCapacityChange = (event) => setCapacity(Number(event.target.value))
@@ -27,11 +26,9 @@ function CreateTable({setTables}) {
 
         try {
         const table = await createTable({table_name, capacity}, abortController.signal)
-        setTables((prevTables) => [...prevTables, table]);
-        console.log("Submitted");
         history.push(`/dashboard`)
         } catch (error) {
-            setError(error.message)
+            setError(error)
         }
 
         return () => abortController.abort()
@@ -39,17 +36,24 @@ function CreateTable({setTables}) {
 
     return (
         <div>
+            <h1>New Table</h1>
             <form onSubmit={submitHandler}>
-                <label htmlFor="table_name">
-                    Table Name
-                    <input required type="text" id="table_name" name="table_name" onChange={handleTableNameChange} />
-                </label>
-                <label htmlFor="capacity">
-                    Capacity
-                    <input required type="number" id="capacity" name="capacity" min="1" onChange={handleCapacityChange}/>
-                </label>
-                <button type="submit">Submit</button>
-                <button type="cancel" onClick={cancelHandler}>Cancel</button>
+                <div>
+                    <label htmlFor="table_name">
+                        Table Name:
+                        <input required type="text" id="table_name" name="table_name" onChange={handleTableNameChange} />
+                    </label>
+                </div>
+                <div>
+                    <label htmlFor="capacity">
+                        Capacity:
+                        <input required type="number" id="capacity" name="capacity" min="1" onChange={handleCapacityChange}/>
+                    </label>
+                </div>
+                <div>
+                    <button type="submit">Submit</button>
+                    <button type="cancel" onClick={cancelHandler}>Cancel</button>
+                </div>
             </form>
             <ErrorAlert error={error} />
         </div>

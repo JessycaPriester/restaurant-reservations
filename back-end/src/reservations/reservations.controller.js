@@ -162,7 +162,7 @@ function hasValidTime(req, res, next) {
   if (reservation_time < '10:30' || reservation_time > '21:30') {
     return next({
       status: 400,
-      message: 'Invalid reservation_time. Choose a future time'
+      message: 'Invalid reservation_time. Outside hours of operation'
     })
   }
   next()

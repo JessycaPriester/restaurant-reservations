@@ -1,79 +1,57 @@
-import React, { useState } from "react";
+import React from "react";
+import { useHistory } from "react-router-dom";
 
-function ReservationForm({onFirstNameStateChange, onLastNameStateChange, onMobileNumberStateChange, onReservationDateChange, onReservationTimeChange, onPeopleChange, first_name, last_name, mobile_number, reservation_date, reservation_time, people}) {
-    const [childStateFirstName, setChildStateFirstName] = useState(first_name)
-    const [childStateLastName, setChildStateLastName] = useState("")
-    const [childStateMobileNumber, setChildStateMobileNumber] = useState("")
-    const [childStateReservationDate, setChildStateReservationDate] = useState("")
-    const [childStateReservationTime, setChildStateReservationTime] = useState("")
-    const [childStatePeople, setChildStatePeople] = useState(1)
+function ReservationForm({ formData, textChangeHandler, numberChangeHandler, handleSubmit }) {
+  const history = useHistory();
 
-    const handleFirstNameChange = (event) => {
-        const newValue = event.target.value
-        setChildStateFirstName(newValue)
-        onFirstNameStateChange(newValue)
+    function cancelHandler() {
+        history.goBack()
     }
 
-    const handleLastNameChange = (event) => {
-        const newValue = event.target.value
-        setChildStateLastName(newValue);
-        onLastNameStateChange(newValue)
-    }
-
-    const handleMobileNumberChange = (event) => {
-        const number = event.target.value
-        const formattedPhoneNumber = number.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3');
-        setChildStateMobileNumber(formattedPhoneNumber)
-        onMobileNumberStateChange(formattedPhoneNumber)
-    }
-
-    const handleReservationDateChange = (event) => {
-        const newValue = event.target.value
-        setChildStateReservationDate(newValue);
-        onReservationDateChange(newValue)
-    }
-
-    const handleReservationTimeChange= (event) => {
-        const newValue = event.target.value
-        setChildStateReservationTime(newValue);
-        onReservationTimeChange(newValue)
-    }
-
-    const handlePartySizeChange = (event) => {
-        const newValue = event.target.value
-        setChildStatePeople(Number(newValue));
-        onPeopleChange(newValue)
-    }
-    
-
-    return (
-        <>
-            <label htmlFor="first_name">
-                    First Name
-                    <input required type="text" id="first_name" name="first_name" value={first_name} onChange={handleFirstNameChange} />
-                </label>
-                <label htmlFor="last_name">
-                    Last Name
-                    <input required type="text" id="last_name" name="last_name" value={last_name} onChange={handleLastNameChange} />
-                </label>
-                <label htmlFor="mobile_number">
-                    Mobile Number
-                    <input required type="text" id="mobile_number" name="mobile_number" value={mobile_number} onChange={handleMobileNumberChange} />
-                </label>
-                <label htmlFor="reservation_date">
-                    Reservation Date
-                    <input required type="date" id="reservation_date" name="reservation_date" value={reservation_date} onChange={handleReservationDateChange} />
-                </label>
-                <label htmlFor="reservation_time">
-                    Reservation Time
-                    <input required type="time" id="reservation_time" name="reservation_time" value={reservation_time} min="00:00" max="23:59" onChange={handleReservationTimeChange} />
-                </label>
-                <label htmlFor="people">
-                    Party Size
-                    <input required type="number" id="people" name="people" value={people} min="1" onChange={handlePartySizeChange} />
-                </label>
-        </>
-    )
+  return (
+    <div>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="first_name">
+            First Name:
+          </label>
+          <input type="text" id="first_name" name="first_name" onChange={textChangeHandler} value={formData.first_name} required/>
+        </div>
+        <div>
+          <label htmlFor="last_name">
+            Last Name:
+          </label>
+          <input type="text" id="last_name" name="last_name" onChange={textChangeHandler} value={formData.last_name} required/>
+        </div>
+        <div>
+          <label htmlFor="mobile_number">
+            Mobile Number:
+          </label>
+          <input type="tel" id="mobile_number" name="mobile_number" onChange={textChangeHandler} value={formData.mobile_number} required/>
+        </div>
+        <div>
+          <label htmlFor="reservation_date">
+            Reservation Date:
+          </label>
+          <input type="date" id="reservation_date" name="reservation_date" onChange={textChangeHandler} value={formData.reservation_date} required/>
+        </div>
+        <div>
+          <label htmlFor="reservation_time">
+            Reservation Time:
+          </label>
+          <input type="time" id="reservation_time" name="reservation_time" onChange={textChangeHandler} value={formData.reservation_time} required/>
+        </div>
+        <div>
+          <label htmlFor="people">
+            Party Size:
+          </label>
+          <input type="number" id="people" name="people" onChange={numberChangeHandler} value={Number(formData.people)} required/>
+        </div>
+        <button type="submit">Submit</button>
+        <button onClick={cancelHandler}>Cancel</button>
+      </form>
+    </div>
+  );
 }
 
-export default ReservationForm
+export default ReservationForm;

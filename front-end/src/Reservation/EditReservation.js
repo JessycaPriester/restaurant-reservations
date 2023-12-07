@@ -1,84 +1,80 @@
-import React, {useEffect, useState} from "react";
-import { useHistory, useParams  } from "react-router-dom";
-
-import { readReservation, updateReservation, handleEditedReservation } from "../utils/api";
-import ReservationForm from "./ReservationForm";
+import React, { useEffect, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import { readReservation, updateReservation } from "../utils/api";
 import ErrorAlert from "../layout/ErrorAlert";
-
+import ReservationForm from "./ReservationForm";
 
 function EditReservation() {
+    const initialFormState = {
+        first_name: "",
+        last_name: "",
+        mobile_number: "",
+        reservation_date: "",
+        reservation_time: "",
+        people: "",
+    };
+
+    const [reservationError, setReservationError] = useState(null);
+    const [formData, setFormData] = useState({ ...initialFormState });
+    const [reservation, setReservation] = useState(null)
+    const [error, setError] = useState(null);
+
+
+    const params = useParams();
+    const reservation_id = params.reservation_id;
     const history = useHistory();
-    
-    const [reservation, setReservation] = useState([])
-    const [ first_name, setFirstName ] = useState("");
-    const [ last_name, setLastName ] = useState("");
-    const [ mobile_number, setMobileNumber] = useState("");
-    const [ reservation_date, setReservationDate ] = useState("");
-    const [ reservation_time, setReservationTime ] = useState("");
-    const [ people, setPeople ] = useState(1)
-    const [error, setError] = useState(null)
 
-    // Find the reservation with the id from the params
-    // Update the states to the values that are from the form 
-    // Update the reservation with those values
 
-    // Find the reservation with the id in the params
-    const params = useParams()
-    const reservation_id = Number(params.reservation_id)
 
+
+
+
+
+    // Get the reservation with the matching id from params
     useEffect(() => {
         const abortController = new AbortController();
         setError(null)
 
         readReservation(reservation_id, abortController.signal)
-            .then(setReservation)
-            .catch(setError)
+            .then((reservation) => {
+                setFormData({
+                    first_name: reservation.first_name,
+                    last_name: reservation.last_name,
+                    mobile_number: reservation.mobile_number,
+                    reservation_date: reservation.reservation_date,
+                    reservation_time: reservation.reservation_time,
+                    people: reservation.people,
+                })
+                setReservation(reservation)
+            })
+            .catch(setReservationError);
+        return () => abortController.abort
+    }, [reservation_id])
 
-        return () => abortController.abort()
-    }, [])
 
-    useEffect(() => {
-        setFirstName(reservation.first_name)
-        setLastName(reservation.last_name)
-        setMobileNumber(reservation.mobile_number)
-        setReservationDate(reservation.reservation_date)
-        setReservationTime(reservation.reservation_time)
-        setPeople(reservation.people)
-    }, [reservation])
+    // Handlers
 
-    // Change handlers for input boxes
-    const handleFirstNameChildStateChange = (childState) => {
-        setFirstName(childState);
+    const textChangeHandler = (event) => {
+        setFormData((currentFormData) => ({
+            ...currentFormData,
+            [event.target.name]: event.target.value,
+        }))
     }
 
-    const handleLastNameChildStateChange = (childState) => {
-        setLastName(childState);
+    const numberChangeHandler = (event) => {
+        setFormData((currentFormData) => ({
+            ...currentFormData,
+            [event.target.name]: Number(event.target.value),
+        }))
     }
 
-    const handleMobileNumberChildStateChange = (childState) => {
-        setMobileNumber(childState);
-    }
 
-    const handleReservationDateChildStateChange = (childState) => {
-        setReservationDate(childState);
-    }
-
-    const handleReservationTimeChildStateChange = (childState) => {
-        setReservationTime(childState);
-    }
-
-    const handlePeopleChildStateChange = (childState) => {
-        setPeople(Number(childState));
-    }
-
-    // Handlers for buttons
-    function cancelHandler() {
-        history.goBack()
-    }
-
-    const submitHandler = async(event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+        setError(null);
+        const abortController = new AbortController();
 
+        const {first_name, last_name, mobile_number, reservation_date, reservation_time, people} = formData
         const updatedReservation = {
             first_name: first_name,
             last_name: last_name,
@@ -89,28 +85,26 @@ function EditReservation() {
             status: reservation.status
         }
 
-        const abortController = new AbortController();
-
-        try {        
-            await updateReservation(reservation.reservation_id, updatedReservation, abortController.signal)
-            history.push(`/dashboard?date=${updatedReservation.reservation_date}`);
-        } catch (error) {
-            setError(error.message)
+        try {
+            await updateReservation(reservation_id, updatedReservation, abortController.signal)
+            history.push(`/dashboard/?date=${updatedReservation.reservation_date}`);
+        } catch(error) {
+            setError(error);
         }
-
-        return () => abortController.abort();
-    }
+    };
 
     return (
-        <div>
-            <form onSubmit={submitHandler}>
-                <ReservationForm onFirstNameStateChange={handleFirstNameChildStateChange} onLastNameStateChange={handleLastNameChildStateChange} onMobileNumberStateChange={handleMobileNumberChildStateChange} onReservationDateChange={handleReservationDateChildStateChange} onReservationTimeChange={handleReservationTimeChildStateChange} onPeopleChange={handlePeopleChildStateChange} first_name={first_name} last_name={last_name} mobile_number={mobile_number} reservation_date={reservation_date} reservation_time={reservation_time} people={people}/>
-                <button type="submit">submit</button>
-                <button type="button" onClick={cancelHandler}>Cancel</button>
-            </form>
+        <main>
+            <div>
+                <h1>Edit Reservation</h1>
+            </div>
+            <div>
+                <ReservationForm formData={formData} textChangeHandler={textChangeHandler} numberChangeHandler={numberChangeHandler} handleSubmit={handleSubmit}/>
+            </div>
             <ErrorAlert error={error} />
-        </div>
-    )
+            <ErrorAlert error={reservationError} />
+        </main>
+    );
 }
 
-export default EditReservation
+export default EditReservation;

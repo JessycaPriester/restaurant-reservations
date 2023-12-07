@@ -8,10 +8,6 @@ function SearchReservation() {
     const [reservations, setReservations] = useState([])
     const [error, setError] = useState(null)
 
-    useEffect(() => {
-        setError(null);
-    })
-
     const phoneNumberChangeHandler = (event) => {
         const number = event.target.value
 
@@ -23,6 +19,7 @@ function SearchReservation() {
         event.preventDefault()
         
         const abortController = new AbortController();
+        setError(null)
 
         try {
             const reservationMatch = await searchReservation(phoneNumber, abortController.signal);
@@ -53,6 +50,7 @@ function SearchReservation() {
 
     return (
         <div>
+            <h1>Search Reservations</h1>
             <form onSubmit={submitHandler}>
                 <label htmlFor="mobile_number">
                     Phone Number:

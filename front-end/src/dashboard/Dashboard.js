@@ -125,7 +125,7 @@ function Dashboard({ date }) {
     <main>
       <h1>Dashboards</h1>
       <div className="d-md-flex mb-3">
-        <h4 className="mb-0">Reservations for date</h4>
+        <h4 className="mb-0">Reservations for {resDate}</h4>
       </div>
       <ErrorAlert error={reservationsError} />
       <ErrorAlert error={tablesError} />

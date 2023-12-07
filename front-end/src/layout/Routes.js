@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { listTables } from "../utils/api";
+import React from "react";
 
 import { Redirect, Route, Switch } from "react-router-dom";
 import Dashboard from "../dashboard/Dashboard";
@@ -20,21 +19,6 @@ import EditReservation from "../Reservation/EditReservation";
  * @returns {JSX.Element}
  */
 function Routes() {
-  
-  const [tables, setTables] = useState([])
-  const [tablesError, setTablesError] = useState(null)
-
-  // When the page is first rendered get the tables and set the tables state to these
-  useEffect(() => {
-    const abortController = new AbortController();
-    setTablesError(null);
-
-    listTables(abortController.signal)
-      .then(setTables)
-      .catch(setTablesError)
-
-  }, [])
-
   return (
     <Switch>
       <Route exact={true} path="/">
@@ -50,7 +34,7 @@ function Routes() {
         <CreateReservation />
       </Route>
       <Route path="/tables/new">
-        <CreateTable setTables={setTables}/>
+        <CreateTable />
       </Route>
       <Route path="/reservations/:reservation_id/seat">
         <SeatReservation />
