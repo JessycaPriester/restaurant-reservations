@@ -99,7 +99,7 @@ function Dashboard({ date }) {
       const updatedTables = await listTables(abortController.signal)
       setTables(updatedTables)
     } catch (error) {
-      console.error("Error handling finished table: ", error)
+      setTablesError(error)
     }
 
     return () => abortController.abort()
@@ -113,7 +113,7 @@ function Dashboard({ date }) {
       console.log(updatedReservations)
       setReservations(updatedReservations)
     } catch (error) {
-      console.error("Error handling cancel reservation: ", error)
+      setReservationsError(error)
     }
 
     return () => abortController.abort()
@@ -130,6 +130,7 @@ function Dashboard({ date }) {
       <div className="d-md-flex mb-3">
         <h4 className="mb-0">Reservations for date</h4>
       </div>
+      <ErrorAlert error={reservationsError} />
       <ErrorAlert error={reservationsError} />
       <h3>Reservations</h3>
       <div>

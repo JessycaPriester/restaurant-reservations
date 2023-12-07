@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { listReservations, updateTable, updateReservationStatus, listTables } from "../utils/api";
+import ErrorAlert from "../layout/ErrorAlert";
 
 function SeatTable() {
     const [reservationsError, setReservationsError] = useState(null);
@@ -8,7 +9,6 @@ function SeatTable() {
     const [tableId, setTableId] = useState(null);
     const [table, setTable] = useState({})
     const [status, setStatus] = useState(null)
-    const [error, setError] = useState(null)
     const [tables, setTables] = useState([])
     const [tablesError, setTablesError] = useState(null)
 
@@ -71,10 +71,6 @@ function SeatTable() {
 
     const submitHandler = async(event) => {
         event.preventDefault();
-        if (reservation.people > table.capacity) {
-            setError("Party size must be less than or equal to table capacity");
-            return;
-        }
 
         const updatedTable = {
             data: {
@@ -96,13 +92,13 @@ function SeatTable() {
                 setStatus(newStatus);
             })
             .catch(error => {
-                console.error('Error updating reservation status:', error.message);
+                setReservationsError(error.message)
             });
 
 
             history.push(`/dashboard?date=${reservation.reservation_date}`)
         } catch (error) {
-            console.error("Error handling seating reservation: ",)
+            setTablesError(error.message)
         }
 
         return () => abortController.abort();
@@ -123,11 +119,8 @@ function SeatTable() {
                 <button type="submit">Submit</button>
                 <button type="button" onClick={(cancelHandler)}>Cancel</button>
             </form>
-            {error && (
-                <div className="alert alert-danger" role="alert">
-                    {error}
-                </div>
-            )}
+            <ErrorAlert error={reservationsError} />
+            <ErrorAlert error={tablesError} />
         </div>
     )
 }

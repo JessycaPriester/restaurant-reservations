@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { deleteSeatAssignment, listTables, updateReservationStatus } from "../utils/api";
 import { useHistory } from 'react-router-dom';
-
-
+import ErrorAlert from '../layout/ErrorAlert';
 function ManageTable({ table, handleFinishTable }) {
     const [status, setStatus] = useState(table.reservation_id ? 'occupied' : 'free');
+    const [error, setError] = useState(null)
 
     const history = useHistory()
 
@@ -21,7 +21,7 @@ function ManageTable({ table, handleFinishTable }) {
         // Rerenders the page
         handleFinishTable(table_id)
       } catch (error) {
-        console.error("Error handling finish table: ", error)
+        setError(error.message)
       }
     }
     return() => abortController.abort()
@@ -31,27 +31,38 @@ function ManageTable({ table, handleFinishTable }) {
     setStatus(table.reservation_id ? 'Occupied' : 'Free');
   }, [table.reservation_id]);
 
+  if(error) {
+    return (
+      <ErrorAlert error = {error} />
+    )
+  }
+
   if (status === "occupied" || table.reservation_id) {
     return(
-      <tr key={table.table_id}>
-        <td>{table.table_name}</td>
-        <td>{table.capacity}</td>
-        <td data-table-id-status={table.table_id}>{status}</td>
-        <td>
-          <button onClick={() => finishHandler(table.table_id, table.reservation_id)} data-table-id-finish={table.table_id}>
-            Finish
-          </button>
-          </td>
-      </tr>
+      <div>
+        <tr key={table.table_id}>
+          <td>{table.table_name}</td>
+          <td>{table.capacity}</td>
+          <td data-table-id-status={table.table_id}>{status}</td>
+          <td>
+            <button onClick={() => finishHandler(table.table_id, table.reservation_id)} data-table-id-finish={table.table_id}>
+              Finish
+            </button>
+            </td>
+        </tr>
+        
+      </div>
     )
   } else {
     return(
-      <tr key={table.table_id}>
-        <td>{table.table_name}</td>
-        <td>{table.capacity}</td>
-        <td data-table-id-status={table.table_id}>{status}</td>
-        <td></td>
-      </tr>
+      <div>
+        <tr key={table.table_id}>
+          <td>{table.table_name}</td>
+          <td>{table.capacity}</td>
+          <td data-table-id-status={table.table_id}>{status}</td>
+          <td></td>
+        </tr>
+      </div>
     )
   }
   

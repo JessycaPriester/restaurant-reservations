@@ -37,7 +37,7 @@ function reservationExists(req, res, next) {
           }
           next({
               status: 404, 
-              message: "99"
+              message: `Reservation ${req.params.reservationId} does not exist`
           })
       })
       .catch(next)
@@ -171,7 +171,7 @@ function hasValidTime(req, res, next) {
   if (reservation_time < '10:30' || reservation_time > '21:30') {
     return next({
       status: 400,
-      message: 'reservation_time'
+      message: 'Invalid reservation_time. Choose a future time'
     })
   }
   next()
@@ -183,14 +183,14 @@ function reservationStatusIsBooked(req, res, next) {
   if (status === "seated") {
     return next({
       status: 400,
-      message: 'seated'
+      message: 'Reservation is already seated'
     })
   }
 
   if (status === "finished") {
     return next({
       status: 400,
-      message: 'finished'
+      message: 'Reservation is already finished'
     })
   }
   next()
@@ -224,7 +224,7 @@ function reservationStatusIsValid(req, res, next) {
   if (reservation.status === "finished") {
     return next({
       status: 400,
-      message: 'finished'
+      message: 'Reservation is already finished'
     })
   }
 
@@ -234,7 +234,7 @@ function reservationStatusIsValid(req, res, next) {
         if (requestStatus !== "cancelled") {
           return next({
             status: 400,
-            message: 'unknown'
+            message: 'Invalid unknown status'
           })
         }
       }

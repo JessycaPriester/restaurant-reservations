@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { listReservations, searchReservation } from "../utils/api"
 import ManageReservation from "./ManageReservation";
+import ErrorAlert from "../layout/ErrorAlert";
 
 function SearchReservation() {
     const [phoneNumber, setPhoneNumber] = useState('')
     const [reservations, setReservations] = useState([])
+    const [error, setError] = useState(null)
 
     const phoneNumberChangeHandler = (event) => {
         const number = event.target.value
@@ -22,7 +24,7 @@ function SearchReservation() {
             const reservationMatch = await searchReservation(phoneNumber, abortController.signal);
             setReservations(reservationMatch)
         } catch (error) {
-            console.error("Error handling reservation search: ", error)
+            setError(error.message)
         }
 
         return () => abortController.abort()
@@ -38,7 +40,7 @@ function SearchReservation() {
         const updatedReservations = await searchReservation(phoneNumber, abortController.signal)
         setReservations(updatedReservations)
         } catch (error) {
-            console.error("Error handling cancel reservation: ", error)
+            setError(error.message)
         }
 
         return () => abortController.abort()
@@ -57,6 +59,7 @@ function SearchReservation() {
                 </label>
                 <button type="submit" disabled={phoneNumber.length < 10}>Find</button>
             </form>
+            <ErrorAlert error={error} />
             {reservations.length === 0 ? (
                 <p>/No reservations found/</p>
             ) : (

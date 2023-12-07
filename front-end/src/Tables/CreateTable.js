@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import { useHistory } from "react-router-dom";
 import { createTable } from "../utils/api";
+import ErrorAlert from "../layout/ErrorAlert";
 
 function CreateTable({setTables}) {
     const history = useHistory();
@@ -22,24 +23,6 @@ function CreateTable({setTables}) {
     const submitHandler = async(event) => {
         event.preventDefault();
 
-        // Check if table name exists
-        if (!table_name) {
-            setError("Table name is required.");
-            return;
-        }
-
-        // Check if table name is two or more characters long
-        if (table_name.length < 2) {
-            setError("Table name must be at least two characters long.")
-            return;
-        }
-
-        // Check that capacity is one or more
-        if (Number(capacity) < 1) {
-            setError("Capacity must be at least 1");
-            return;
-        }
-
         const abortController = new AbortController();
 
         try {
@@ -48,7 +31,7 @@ function CreateTable({setTables}) {
         console.log("Submitted");
         history.push(`/dashboard`)
         } catch (error) {
-            console.error("Error handling create table: ", error)
+            setError(error.message)
         }
 
         return () => abortController.abort()
@@ -68,11 +51,7 @@ function CreateTable({setTables}) {
                 <button type="submit">Submit</button>
                 <button type="cancel" onClick={cancelHandler}>Cancel</button>
             </form>
-            {error && (
-                <div className="alert alert-danger" role="alert">
-                    {error}
-                </div>
-            )}
+            <ErrorAlert error={error} />
         </div>
     )
 }
